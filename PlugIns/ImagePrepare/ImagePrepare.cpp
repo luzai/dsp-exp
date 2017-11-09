@@ -58,46 +58,46 @@ CImagePrepareApp::CImagePrepareApp()
 // The one and only CImagePrepareApp object
 CImagePrepareApp theApp;
 
-char sInfo[] = "äººè„¸è·Ÿè¸ª-æ‘„åƒå¤´è§†é¢‘æµå›¾ç‰‡æˆªå–å¤„ç†æ’ä»¶";
+char sInfo[] = "ÈËÁ³¸ú×Ù-ÉãÏñÍ·ÊÓÆµÁ÷Í¼Æ¬½ØÈ¡´¦Àí²å¼ş";
 bool bLastPlugin = false;
 
 DLL_EXP void ON_PLUGIN_BELAST(bool bLast)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	bLastPlugin = bLast;
 }
-//æ’ä»¶åç§°
+//²å¼şÃû³Æ
 DLL_EXP LPCTSTR ON_PLUGININFO(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	return sInfo;
 }
 //
 DLL_EXP void ON_INITPLUGIN(LPVOID lpParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.Create(IDD_PLUGIN_SETUP);
 	//theApp.dlg.ShowWindow(SW_HIDE);
 }
 DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 {
-//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+//Ä£¿é×´Ì¬ÇĞ»»
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	int nRet = 0;
 	return nRet;
 }
 
 /****************************************************************************************/
-/*                             æ‘„åƒå¤´è§†é¢‘æµå›¾ç‰‡æˆªå–ã€é‡é‡‡æ ·ç­‰å¤„ç†                       */
+/*                             ÉãÏñÍ·ÊÓÆµÁ÷Í¼Æ¬½ØÈ¡¡¢ÖØ²ÉÑùµÈ´¦Àí                       */
 /****************************************************************************************/
 
 DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYTE* pBuffer)
 {
-//pYBits å¤§å°ä¸ºw*h
-//pUBits å’Œ pVBits çš„å¤§å°ä¸º w*h/2
-//pBuffer çš„å¤§å°ä¸º w*h*6
-//ä¸‹é¢ç®—æ³•éƒ½åŸºäºä¸€ä¸ªå‡è®¾ï¼Œå³wæ˜¯16çš„å€æ•°
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+//pYBits ´óĞ¡Îªw*h
+//pUBits ºÍ pVBits µÄ´óĞ¡Îª w*h/2
+//pBuffer µÄ´óĞ¡Îª w*h*6
+//ÏÂÃæËã·¨¶¼»ùÓÚÒ»¸ö¼ÙÉè£¬¼´wÊÇ16µÄ±¶Êı
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 
 	int i,j;
 	BUF_STRUCT* BUF = (BUF_STRUCT*) pBuffer
@@ -197,7 +197,7 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 	pV+=2*w;
 	pd8+=w/4;
 	}
-	/ /åå…­åˆ†ä¹‹ä¸€é‡‡æ ·
+	/ /Ê®Áù·ÖÖ®Ò»²ÉÑù
 	BYTE *pd16=BUF->grayBmp_1d16;
 	pY=pYBits;
 	for(j=0;j<h/4;j++)
@@ -210,17 +210,17 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 
 	if(bLastPlugin)
 	{
-	CopyToRect(BUF->clrBmp_1d8,//æºå›¾ç‰‡æŒ‡é’ˆ
-	pYBits,//ç›®æ ‡å›¾ç‰‡æŒ‡é’ˆ,ç”¨displayimageä¼šæŠ¥é”™
-	3 20,120,//åŒºåŸŸå›¾ç‰‡å¤§å°
-	6 40,480,//ç›®æ ‡å›¾ç‰‡å¤§å°
-	1 ,1,//åŒºåŸŸä½ç½®:å›¾ç‰‡å·¦ä¸Šè§’åœ¨ç›®æ ‡å›¾ç‰‡çš„åæ ‡
+	CopyToRect(BUF->clrBmp_1d8,//Ô´Í¼Æ¬Ö¸Õë
+	pYBits,//Ä¿±êÍ¼Æ¬Ö¸Õë,ÓÃdisplayimage»á±¨´í
+	3 20,120,//ÇøÓòÍ¼Æ¬´óĞ¡
+	6 40,480,//Ä¿±êÍ¼Æ¬´óĞ¡
+	1 ,1,//ÇøÓòÎ»ÖÃ:Í¼Æ¬×óÉÏ½ÇÔÚÄ¿±êÍ¼Æ¬µÄ×ø±ê
 	false);
-	CopyToRect(BUF->grayBmp_1d16,//æºå›¾ç‰‡æŒ‡é’ˆ
-	pYBits,//ç›®æ ‡å›¾ç‰‡æŒ‡é’ˆ
-	1 60,120,//åŒºåŸŸå›¾ç‰‡å¤§å°
-	6 40,480,//ç›®æ ‡å›¾ç‰‡å¤§å°
-	4 80,1,//åŒºåŸŸä½ç½®:å›¾ç‰‡å·¦ä¸Šè§’åœ¨ç›®æ ‡å›¾ç‰‡çš„åæ ‡
+	CopyToRect(BUF->grayBmp_1d16,//Ô´Í¼Æ¬Ö¸Õë
+	pYBits,//Ä¿±êÍ¼Æ¬Ö¸Õë
+	1 60,120,//ÇøÓòÍ¼Æ¬´óĞ¡
+	6 40,480,//Ä¿±êÍ¼Æ¬´óĞ¡
+	4 80,1,//ÇøÓòÎ»ÖÃ:Í¼Æ¬×óÉÏ½ÇÔÚÄ¿±êÍ¼Æ¬µÄ×ø±ê
 	true);}
 	}
 
@@ -230,6 +230,6 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 
 DLL_EXP void ON_PLUGINEXIT()
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.DestroyWindow();
 }

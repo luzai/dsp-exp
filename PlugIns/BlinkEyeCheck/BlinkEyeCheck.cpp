@@ -72,8 +72,8 @@ CBlinkEyeCheckApp theApp;
 //
 #define PC_MODE
 /***************************************************************
-è¿™äº›å˜é‡åªåœ¨PCç‰ˆä¸­å­˜åœ¨ï¼Œæ–¹ä¾¿è°ƒè¯•
-åœ¨DSPç‰ˆæœ¬ä¸­ä¸ç”¨å¼•å…¥
+ÕâĞ©±äÁ¿Ö»ÔÚPC°æÖĞ´æÔÚ£¬·½±ãµ÷ÊÔ
+ÔÚDSP°æ±¾ÖĞ²»ÓÃÒıÈë
 ***************************************************************/
 #ifdef PC_MODE
 aBYTE open_eye_left[32*24*2];
@@ -85,32 +85,32 @@ aBYTE st_nose[32*48*2];
 
 
 
-char sInfo[] = "äººè„¸è·Ÿè¸ª-çœ¨çœ¼æ£€æµ‹äººè„¸å®šä½å¤„ç†æ’ä»¶";
+char sInfo[] = "ÈËÁ³¸ú×Ù-Õ£ÑÛ¼ì²âÈËÁ³¶¨Î»´¦Àí²å¼ş";
 
 bool bLastPlugin = false;
 
 DLL_EXP void ON_PLUGIN_BELAST(bool bLast)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	bLastPlugin = bLast;
 }
 
 DLL_EXP LPCTSTR ON_PLUGININFO(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	return sInfo;
 }
 
 DLL_EXP void ON_INITPLUGIN(LPVOID lpParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.Create(IDD_PLUGIN_SETUP);
 	//theApp.dlg.ShowWindow(SW_HIDE);
 }
 
 DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	int nRet = 0;
 	switch(nMode)
 	{
@@ -127,25 +127,25 @@ DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 
 DDL_EXP void Erosion(aBYTE* tempImg, int width, int height,int N1, int N2){
 	int i,j,k,flag;
-	//åˆ†é…ä¸€ä¸ªä¸´æ—¶å˜é‡
+	//·ÖÅäÒ»¸öÁÙÊ±±äÁ¿
 	aBYTE *tempImg1=myHeapAlloc(width*height);
-	//å…ˆå¤åˆ¶ä¸¤æŒ‡é’ˆæŒ‡å‘çš„å†…å®¹,ä¿ç•™è¾¹ç•Œåƒç´ 
+	//ÏÈ¸´ÖÆÁ½Ö¸ÕëÖ¸ÏòµÄÄÚÈİ,±£Áô±ß½çÏñËØ
 	memcpy(tempImg1,tempImg,width*height*sizeof(aBYTE));
-	//è¡Œå¤„ç†
+	//ĞĞ´¦Àí
 	for(i=0;i<height;i++)
 	{
-		//ä¸ºäº†é˜²æ­¢è¶Šç•Œ,ä¸å¤„ç†è¾¹ç•Œn/2ä¸ªåƒç´ 
+		//ÎªÁË·ÀÖ¹Ô½½ç,²»´¦Àí±ß½çn/2¸öÏñËØ
 		for(j=N1/2;j<width-N1/2;j++)
 		{
 			flag=1;
 			for(k=0;k<N1;k++)
 			if(tempImg[i*width+j-N1/2+k]==0)
 			{
-			//ä¸€æ—¦åœ¨ç»“æ„å…ƒåŒºåŸŸå†…æ‰¾åˆ°ä¸€ä¸ªé»‘è‰²åŒºåŸŸ,æ ‡è®°è…èš€å¹¶é€€å‡ºå¾ªç¯
+			//Ò»µ©ÔÚ½á¹¹ÔªÇøÓòÄÚÕÒµ½Ò»¸öºÚÉ«ÇøÓò,±ê¼Ç¸¯Ê´²¢ÍË³öÑ­»·
 				flag=0;
 				break;
 			}
-			tempImg1[i*width+j]=flag?255:0;//æ ¹æ®flagå†³å®šæ˜¯å¦è…èš€
+			tempImg1[i*width+j]=flag?255:0;//¸ù¾İflag¾ö¶¨ÊÇ·ñ¸¯Ê´
 		}
 	}
 
@@ -212,22 +212,22 @@ DLL_EXP void Dilation(aBYTE* tempImg,int width,int height,int N1, int N2){
 DLL_EXP int RegionLabel(aBYTE* tempImg,int width,int height){
 	int i,classnum,L=0;
 	int Lmax,Lmin;
-	int LK[1024],LK1[1024];//ç­‰ä»·è¡¨
+	int LK[1024],LK1[1024];//µÈ¼Û±í
 	int Left=0,Up=0;
 	for(i=0;i<1024;i++)
 	LK[i]=i;
-	WORD* tempLabel=(WORD*)myHeapAlloc(width*height*sizeof(WORD));//WORDå‹å˜é‡ä¸ºä¸¤ä¸ªå­—èŠ‚
+	WORD* tempLabel=(WORD*)myHeapAlloc(width*height*sizeof(WORD));//WORDĞÍ±äÁ¿ÎªÁ½¸ö×Ö½Ú
 
 	for(i=0;i<width*height;i++){
 		if(tempImg[i]!=0){
 			if(i<width||tempImg[i-width]==0){
-				if(i%width==0||tempImg[i-1]==0)//å·¦è¾¹ä¹Ÿæ˜¯é»‘ç‚¹,åˆ¤å®šä¸€ä¸ªæ–°åŒºåŸŸ
+				if(i%width==0||tempImg[i-1]==0)//×ó±ßÒ²ÊÇºÚµã,ÅĞ¶¨Ò»¸öĞÂÇøÓò
 				tempLabel[i]=++L;
 				else tempLabel[i]=tempLabel[i-1];
 			}
 			else{
 				if(i%width==0||tempImg[i-1]==0)
-				tempLabel[i]=tempLabel[i-width];//å¤åˆ¶ä¸Šè¾¹æ ‡å·
+				tempLabel[i]=tempLabel[i-width];//¸´ÖÆÉÏ±ß±êºÅ
 				else if(tempLabel[i-width]==tempLabel[i-1])
 				tempLabel[i]=tempLabel[i-width];
 				else {
@@ -255,12 +255,12 @@ DLL_EXP int RegionLabel(aBYTE* tempImg,int width,int height){
 	while(Lmax!=LK[Lmax])
 	Lmax=LK[Lmax];
 	}
-	//è¿é€šåŒºåŸŸé‡æ–°åˆ†ç±»
+	//Á¬Í¨ÇøÓòÖØĞÂ·ÖÀà
 	for(LK1[0]=0,i=1,classnum=1;i<=L;i++)
 	if(i==LK[i])
 	LK1[i]=classnum++;
 	else LK1[i]=LK1[LK[i]];
-	//å›¾ç‰‡ä»£æ¢,æ³¨æ„æœ€ç»ˆè¿é€šåŸŸæ ‡å·ä¸èƒ½å¤§äº255
+	//Í¼Æ¬´ú»»,×¢Òâ×îÖÕÁ¬Í¨Óò±êºÅ²»ÄÜ´óÓÚ255
 	for(i=0;i<width*height;i++)
 	tempImg[i]=LK1[tempLabel[i]];
 	myHeapFree((aBYTE*)tempLabel);
@@ -277,22 +277,22 @@ DLL_EXP void thresh_img(BUF_STRUCT* pBS);
 DLL_EXP void proc_img(BUF_STRUCT* pBS);
 
 /*******************************************************************/
-//çœ¨çœ¼æ£€æµ‹ä¸çœ¼ç›å®šä½æ’ä»¶
+//Õ£ÑÛ¼ì²âÓëÑÛ¾¦¶¨Î»²å¼ş
 /*******************************************************************/
 DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYTE* pBuffer)
 {
-//pYBits å¤§å°ä¸ºw*h
-//pUBits å’Œ pVBits çš„å¤§å°ä¸º w*h/2
-//pBuffer çš„å¤§å°ä¸º w*h*4
-//ä¸‹é¢ç®—æ³•éƒ½åŸºäºä¸€ä¸ªå‡è®¾ï¼Œ å³wæ˜¯16çš„å€æ•°
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
-	 //è¯·ç¼–å†™ç›¸åº”å¤„ç†ç¨‹åº
+//pYBits ´óĞ¡Îªw*h
+//pUBits ºÍ pVBits µÄ´óĞ¡Îª w*h/2
+//pBuffer µÄ´óĞ¡Îª w*h*4
+//ÏÂÃæËã·¨¶¼»ùÓÚÒ»¸ö¼ÙÉè£¬ ¼´wÊÇ16µÄ±¶Êı
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
+	 //Çë±àĞ´ÏàÓ¦´¦Àí³ÌĞò
 	BUF_STRUCT* pBS = (BUF_STRUCT*)pBuffer;
 
-	// è¿›è¡Œé«˜æ–¯æ»¤æ³¢
+	// ½øĞĞ¸ßË¹ÂË²¨
 	gs_filter(pBS->grayBmp_1d16, width / 4, height / 4);
 
-	// å°†å›¾åƒå­˜å…¥å†å²å›¾åƒ
+	// ½«Í¼Ïñ´æÈëÀúÊ·Í¼Ïñ
 	const int N = 3;
 	if (pBS->nImageQueueIndex == -1) {
 		for (int i = 0; i < 8; i++)
@@ -326,7 +326,7 @@ void get_bbox(aBYTE* tempImg, int w, int h,int k, int* bbox ){
 				if(i<minx)minx=i;
 				if(i>maxx)maxx=i;
 				if(j<miny)miny=j;
-				if(j>maxy)maxy=j;//ç¬¬ä¸€æ¬¡å†™é”™äº†å¯¼è‡´ç”»æ–¹æ¡†ä¸å‡†ç¡®
+				if(j>maxy)maxy=j;//µÚÒ»´ÎĞ´´íÁËµ¼ÖÂ»­·½¿ò²»×¼È·
 			}
 		}
 	}
@@ -440,7 +440,7 @@ aBYTE get_px_value(aBYTE* img, int row, int col, int width, int height) {
 /*******************************************************************/
 DLL_EXP void ON_PLUGINEXIT()
 {
-   AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+   AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.DestroyWindow();
 }
 

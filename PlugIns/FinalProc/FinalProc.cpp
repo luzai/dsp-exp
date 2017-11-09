@@ -61,30 +61,30 @@ CFinalProcApp::CFinalProcApp()
 // The one and only CFinalProcApp object
 
 CFinalProcApp theApp;
-char sInfo[] = "çŒç¡æ£€æµ‹å’ŒæŠ¥è­¦æ’ä»¶";
+char sInfo[] = "î§Ë¯¼ì²âºÍ±¨¾¯²å¼ş";
 bool bLastPlugin = false;
 DLL_EXP void ON_PLUGIN_BELAST(bool bLast)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	bLastPlugin = bLast;
 }
 
 DLL_EXP LPCTSTR ON_PLUGININFO(void)
 {
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	return sInfo;
 }
 
 DLL_EXP void ON_INITPLUGIN(LPVOID lpParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.Create(IDD_PLUGIN_SETUP);
 	//theApp.dlg.ShowWindow(SW_HIDE);
 }
 
 DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	int nRet = 0;
 	switch(nMode)
 	{
@@ -100,14 +100,14 @@ DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 
 DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYTE* pBuffer)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
-	//è¯·ç¼–å†™ç›¸åº”å¤„ç†ç¨‹åº
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
+	//Çë±àĞ´ÏàÓ¦´¦Àí³ÌĞò
 
 }
 
 DLL_EXP void ON_PLUGINEXIT()
 {
-   AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+   AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.DestroyWindow();
 }
 

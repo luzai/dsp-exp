@@ -63,12 +63,12 @@ struct OTHER_VARS
 					objRighteye,
 					objLefteyeClose,
 					objRighteyeClose;
-	//è„¸éƒ¨é¢œè‰²è¿‡æ»¤çŸ¢é‡ç›´æ–¹å›¾åŠå…¨å±€å˜é‡åŒºåŸŸ	--1024å­—èŠ‚
+	//Á³²¿ÑÕÉ«¹ýÂËÊ¸Á¿Ö±·½Í¼¼°È«¾Ö±äÁ¿ÇøÓò	--1024×Ö½Ú
 	aBYTE byHistMap_U[256],byHistMap_V[256];
 	aBYTE ClrLocBuf[256*2];
-	//ç‰¹å¾å¤„ç†ä¸­ç”¨åˆ°çš„å…¨å±€å˜é‡åŒºåŸŸ			--16192å­—èŠ‚
+	//ÌØÕ÷´¦ÀíÖÐÓÃµ½µÄÈ«¾Ö±äÁ¿ÇøÓò			--16192×Ö½Ú
 	aBYTE	FeaProcBuf[256*4*16];
-	//è·Ÿè¸ªå¤„ç†ä¸­ç”¨åˆ°çš„å…¨å±€å˜é‡åŒºåŸŸ			--1024å­—èŠ‚
+	//¸ú×Ù´¦ÀíÖÐÓÃµ½µÄÈ«¾Ö±äÁ¿ÇøÓò			--1024×Ö½Ú
 //	
 	aBYTE   TraceProcBuf[256*4-sizeof(bool)];
 };
@@ -85,28 +85,28 @@ struct _BUF_STRUCT
 	aBYTE *TempImage1d8;
 	aBYTE *lastImageQueue1d16m8;
 	aBYTE *pImageQueue[8];
-	aBYTE* pOtherData;									//åŽæ–¹å‰©ä½™ç©ºé—´æŒ‡é’ˆ
-	OTHER_VARS* pOtherVars;							//å…¶ä»–å¿…è¦çš„å˜é‡é›†ä¸­å­˜æ”¾åœ¨è¿™ä¸ªç»“æž„ä½“ä¸­
-//	aBYTE *pImageBkgnd1d16; 							//èƒŒæ™¯å›¾åƒ
-//	aBYTE *pImageBkgnd_detail1d16; 					//èƒŒæ™¯å›¾åƒç»†èŠ‚éƒ¨åˆ†
-//	aBYTE *pImageBkgnd_stable1d16;					//ä¸éšç€å½“å‰å›¾åƒæ›´æ–°çš„èƒŒæ™¯å›¾åƒ
-//	aBYTE *pImageFrgnd1d16; 							//å‰æ™¯å›¾åƒ
-	int nImageQueueIndex,nLastImageIndex;			//çœ¨çœ¼æ£€æµ‹åŽ†å²å›¾åƒåºåˆ—ç´¢å¼•å’Œè®°å½•
-	bool bLastEyeChecked;								//ä¸Šæ¬¡å¤„ç†å·²ç»æ£€æµ‹åˆ°çœ¼ç›çš„æ ‡è®°
-	aRect rcnFace;										//è„¸éƒ¨è‰²åº¦åˆ†å‰²ç»“æžœåŒºåŸŸ
-	int nFacePixelNum;									//è„¸éƒ¨åŒºåŸŸç‚¹æ•°
-	aPOINT ptTheNose,ptTheLeftEye,ptTheRightEye;	//è„¸éƒ¨å™¨å®˜ä½ç½®
+	aBYTE* pOtherData;									//ºó·½Ê£Óà¿Õ¼äÖ¸Õë
+	OTHER_VARS* pOtherVars;							//ÆäËû±ØÒªµÄ±äÁ¿¼¯ÖÐ´æ·ÅÔÚÕâ¸ö½á¹¹ÌåÖÐ
+//	aBYTE *pImageBkgnd1d16; 							//±³¾°Í¼Ïñ
+//	aBYTE *pImageBkgnd_detail1d16; 					//±³¾°Í¼ÏñÏ¸½Ú²¿·Ö
+//	aBYTE *pImageBkgnd_stable1d16;					//²»Ëæ×Åµ±Ç°Í¼Ïñ¸üÐÂµÄ±³¾°Í¼Ïñ
+//	aBYTE *pImageFrgnd1d16; 							//Ç°¾°Í¼Ïñ
+	int nImageQueueIndex,nLastImageIndex;			//Õ£ÑÛ¼ì²âÀúÊ·Í¼ÏñÐòÁÐË÷ÒýºÍ¼ÇÂ¼
+	bool bLastEyeChecked;								//ÉÏ´Î´¦ÀíÒÑ¾­¼ì²âµ½ÑÛ¾¦µÄ±ê¼Ç
+	aRect rcnFace;										//Á³²¿É«¶È·Ö¸î½á¹ûÇøÓò
+	int nFacePixelNum;									//Á³²¿ÇøÓòµãÊý
+	aPOINT ptTheNose,ptTheLeftEye,ptTheRightEye;	//Á³²¿Æ÷¹ÙÎ»ÖÃ
 	int nFVTop;											//
-	bool EyeBallConfirm;								//çœ¼ç è‰²åº¦æ£€éªŒæŽ§åˆ¶
-	bool EyePosConfirm;								//çœ¼ç ä½ç½®æ£€éªŒæŽ§åˆ¶
-	bool bNotInited;									//åˆå§‹åŒ–æ ‡è®°
-//	bool bBkgndInited;									//èƒŒæ™¯å»ºç«‹æ ‡å¿—
-//	int  nBkgndKeepFrames;							//èƒŒæ™¯å»ºç«‹ä¸­çš„å¸§è®¡æ•°
-//	int  nBkgndLostFrames;							//èƒŒæ™¯æ›´æ–°å¤±è´¥æ¬¡æ•°ï¼Œç”¨äºŽåˆ¤æ–­æ˜¯å¦éœ€è¦é‡å»ºèƒŒæ™¯
-//	int  nUnvisibleRgnAdjust;							//èƒŒæ™¯æ›´æ–°æ—¶å¯¹éžèƒŒæ™¯åŒºåŸŸçš„é¢„æµ‹è°ƒæ•´å€¼
+	bool EyeBallConfirm;								//ÑÛÖéÉ«¶È¼ìÑé¿ØÖÆ
+	bool EyePosConfirm;								//ÑÛÖéÎ»ÖÃ¼ìÑé¿ØÖÆ
+	bool bNotInited;									//³õÊ¼»¯±ê¼Ç
+//	bool bBkgndInited;									//±³¾°½¨Á¢±êÖ¾
+//	int  nBkgndKeepFrames;							//±³¾°½¨Á¢ÖÐµÄÖ¡¼ÆÊý
+//	int  nBkgndLostFrames;							//±³¾°¸üÐÂÊ§°Ü´ÎÊý£¬ÓÃÓÚÅÐ¶ÏÊÇ·ñÐèÒªÖØ½¨±³¾°
+//	int  nUnvisibleRgnAdjust;							//±³¾°¸üÐÂÊ±¶Ô·Ç±³¾°ÇøÓòµÄÔ¤²âµ÷ÕûÖµ
 
-	int cur_allocSize,max_allocSize,allocTimes;		//å†…å­˜åˆ†é…å‚æ•°
-	int cur_maxallocsize;								//è®°å½•è¿è¡Œä¸­æœ€å¤§åˆ†é…å†…å­˜æ•°
+	int cur_allocSize,max_allocSize,allocTimes;		//ÄÚ´æ·ÖÅä²ÎÊý
+	int cur_maxallocsize;								//¼ÇÂ¼ÔËÐÐÖÐ×î´ó·ÖÅäÄÚ´æÊý
 	aBYTE byReserved[256-17*sizeof(aBYTE*)-4*sizeof(bool)-10*sizeof(int)-sizeof(aRect)-3*sizeof(aPOINT)-sizeof(OTHER_VARS*)];
 	//                     68                16             40            16            24               4
 };

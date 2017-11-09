@@ -78,28 +78,28 @@ DLL_INP int FV_Distance(FeatureVector* pFV,FeatureVector* aFV,int nFaceClrWeight
 
 DLL_EXP void ON_PLUGIN_BELAST(bool bLast)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	bLastPlugin = bLast;
 }
 
-char sInfo[] = "äººè„¸è·Ÿè¸ª-çœ¼ç›é¼»å­è·Ÿè¸ªå¤„ç†æ’ä»¶";
+char sInfo[] = "ÈËÁ³¸ú×Ù-ÑÛ¾¦±Ç×Ó¸ú×Ù´¦Àí²å¼ş";
 
 DLL_EXP LPCTSTR ON_PLUGININFO(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	return sInfo;
 }
 
 DLL_EXP void ON_INITPLUGIN(LPVOID lpParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.Create(IDD_PLUGIN_SETUP);
 	//theApp.dlg.ShowWindow(SW_HIDE);
 }
 
 DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	int nRet = 0;
 	switch(nMode)
 	{
@@ -115,12 +115,12 @@ DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 
 
 /*******************************************************************/
-//çœ¼é¼»è·Ÿè¸ª
+//ÑÛ±Ç¸ú×Ù
 /*******************************************************************/
 DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYTE* pBuffer)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
-	 //è¯·ç¼–å†™ç›¸åº”å¤„ç†ç¨‹åº
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
+	 //Çë±àĞ´ÏàÓ¦´¦Àí³ÌĞò
 
 }
 /*******************************************************************/
@@ -128,7 +128,7 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 /*******************************************************************/
 DLL_EXP void ON_PLUGINEXIT()
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.DestroyWindow();
 }
 

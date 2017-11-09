@@ -64,7 +64,7 @@ CImageProcApp::CImageProcApp()
 CImageProcApp theApp;
 
 
-//å®šä¹‰ä¸€ä¸ªç»“æ„ï¼Œç”¨äºåŒçº¿æ€§å†…æ’æ³•é‡é‡‡æ ·
+//¶¨ÒåÒ»¸ö½á¹¹£¬ÓÃÓÚË«ÏßĞÔÄÚ²å·¨ÖØ²ÉÑù
 struct LookupCell{
     UINT x;
     UINT i;
@@ -72,7 +72,7 @@ struct LookupCell{
     UINT ksx;
     UINT xsi;
 };
-//å®šä¹‰ä¸€ä¸ªå…¨å±€å˜é‡
+//¶¨ÒåÒ»¸öÈ«¾Ö±äÁ¿
 BUF_STRUCT * pBS = NULL;
 //
 void (*AddMessageToList)(char * message)=NULL;
@@ -93,7 +93,7 @@ DLL_EXP void ShowDebugMessage(char* format,...)
 		(*AddMessageToList)(sBuffer);
 }
 /*******************************************************************/
-//åˆå§‹åŒ–å…¨å±€å˜é‡
+//³õÊ¼»¯È«¾Ö±äÁ¿
 /*******************************************************************/
 DLL_EXP void myHeapAllocInit(BUF_STRUCT* pBufStruct)
 {
@@ -104,7 +104,7 @@ DLL_EXP void myHeapAllocInit(BUF_STRUCT* pBufStruct)
 	pBS->cur_maxallocsize = 0;
 }
 /*******************************************************************/
-//åœ¨åŠ¨æ€å†…å­˜ä¸­åˆ›å»ºå¤§å° ä¸ºsizeå­—èŠ‚çš„å‘é‡
+//ÔÚ¶¯Ì¬ÄÚ´æÖĞ´´½¨´óĞ¡ Îªsize×Ö½ÚµÄÏòÁ¿
 /*******************************************************************/
 DLL_EXP aBYTE* myHeapAlloc(int size)
 {
@@ -117,12 +117,12 @@ DLL_EXP aBYTE* myHeapAlloc(int size)
 	if( pBS->cur_allocSize>pBS->cur_maxallocsize )
 		{
 		pBS->cur_maxallocsize = pBS->cur_allocSize;
-		ShowDebugMessage("æœ€å¤§åŠ¨æ€è¿å­˜éœ€æ±‚è¾¾åˆ°%då­—èŠ‚",pBS->cur_maxallocsize);
+		ShowDebugMessage("×î´ó¶¯Ì¬ÔË´æĞèÇó´ïµ½%d×Ö½Ú",pBS->cur_maxallocsize);
 		}
 	return pBS->pOtherData+pBS->cur_allocSize-size;
 }
 /*******************************************************************/
-//é‡Šæ”¾åŠ¨æ€å†…å­˜ä¸­çš„å‘é‡
+//ÊÍ·Å¶¯Ì¬ÄÚ´æÖĞµÄÏòÁ¿
 /*******************************************************************/
 DLL_EXP void myHeapFree(aBYTE* ptr)
 {
@@ -133,13 +133,13 @@ DLL_EXP void myHeapFree(aBYTE* ptr)
 }
 
 /*******************************************************************/
-//ç”»ç‚¹
+//»­µã
 /*******************************************************************/
 DLL_EXP void PutPixel(
-	aBYTE* ThisImage,int W,int H,//æ˜¾ç¤ºå›¾ç‰‡æŒ‡é’ˆåŠå¤§å°
-	int x,int y,//ç‚¹çš„åæ ‡
-	COLORREF Color,//é¢œè‰²ï¼ŒYUVæ ¼å¼
-	bool bGray)    //ç°åº¦æ ‡è®°ï¼ŒTRUE-ç°åº¦ï¼ŒFALSE-å½©è‰²
+	aBYTE* ThisImage,int W,int H,//ÏÔÊ¾Í¼Æ¬Ö¸Õë¼°´óĞ¡
+	int x,int y,//µãµÄ×ø±ê
+	COLORREF Color,//ÑÕÉ«£¬YUV¸ñÊ½
+	bool bGray)    //»Ò¶È±ê¼Ç£¬TRUE-»Ò¶È£¬FALSE-²ÊÉ«
 {
     ASSERT(ThisImage);
     int R,G,B;
@@ -147,9 +147,9 @@ DLL_EXP void PutPixel(
     if(x<0 || x>=W) return;
     if(y<0 || y>=H) return;
 
-    R = GetRValue(Color);//å–ä½å­—èŠ‚ï¼ŒYæˆ–R
-    G = GetGValue(Color);//å–ä¸­é—´å­—èŠ‚,Uæˆ–G
-    B = GetBValue(Color);//å–é«˜å­—èŠ‚,Væˆ–B
+    R = GetRValue(Color);//È¡µÍ×Ö½Ú£¬Y»òR
+    G = GetGValue(Color);//È¡ÖĞ¼ä×Ö½Ú,U»òG
+    B = GetBValue(Color);//È¡¸ß×Ö½Ú,V»òB
 
     if( bGray )
 		lpBits[W*y+x] = (aBYTE)G;
@@ -161,88 +161,88 @@ DLL_EXP void PutPixel(
 		}
 }
 /*******************************************************************/
-//ç”»æ°´å¹³ç›´çº¿
+//»­Ë®Æ½Ö±Ïß
 /*******************************************************************/
 DLL_EXP void DrawHLine(
-		aBYTE* ThisImage,int W,int H,//æ˜¾ç¤ºå›¾ç‰‡æŒ‡é’ˆåŠå¤§å°
-		int nvSX,int nvEX,           //ç›´çº¿æ°´å¹³èµ·ç‚¹ã€ç»ˆç‚¹
-		int nvY,                     //ç›´çº¿å‚ç›´ä½ç½®
-		COLORREF Color,//è¾¹æ¡†é¢œè‰²ï¼ŒYUVæ ¼å¼
-		bool bGray//ç°åº¦æ ‡è®°ï¼ŒTRUE-ç°åº¦ï¼ŒFALSE-å½©è‰²
+		aBYTE* ThisImage,int W,int H,//ÏÔÊ¾Í¼Æ¬Ö¸Õë¼°´óĞ¡
+		int nvSX,int nvEX,           //Ö±ÏßË®Æ½Æğµã¡¢ÖÕµã
+		int nvY,                     //Ö±Ïß´¹Ö±Î»ÖÃ
+		COLORREF Color,//±ß¿òÑÕÉ«£¬YUV¸ñÊ½
+		bool bGray//»Ò¶È±ê¼Ç£¬TRUE-»Ò¶È£¬FALSE-²ÊÉ«
 		)
 {
     int i;
 	ASSERT(ThisImage);
     if( nvEX > nvSX )
         for(i=nvSX;i<=nvEX;i++)
-			//åœ¨åæ ‡(i,nvY)å¤„ç”»ç‚¹
+			//ÔÚ×ø±ê(i,nvY)´¦»­µã
              PutPixel(ThisImage,W,H, i,nvY,Color,bGray);
     else
         for(i=nvEX;i<=nvSX;i++)
-            //åœ¨åæ ‡(i,nvY)å¤„ç”»ç‚¹
+            //ÔÚ×ø±ê(i,nvY)´¦»­µã
              PutPixel(ThisImage,W,H, i,nvY,Color,bGray);
 }
 /*******************************************************************/
-//ç”»å‚ç›´ç›´çº¿
+//»­´¹Ö±Ö±Ïß
 /*******************************************************************/
 DLL_EXP void DrawVLine(
-			aBYTE* ThisImage,int W,int H,//æ˜¾ç¤ºå›¾ç‰‡æŒ‡é’ˆåŠå¤§å°
-			int nvX,    //ç›´çº¿æ°´å¹³ä½ç½®
-			int nvSY,int nvEY,//ç›´çº¿å‚ç›´èµ·ç‚¹ã€ç»ˆç‚¹
+			aBYTE* ThisImage,int W,int H,//ÏÔÊ¾Í¼Æ¬Ö¸Õë¼°´óĞ¡
+			int nvX,    //Ö±ÏßË®Æ½Î»ÖÃ
+			int nvSY,int nvEY,//Ö±Ïß´¹Ö±Æğµã¡¢ÖÕµã
 			COLORREF Color,
-			bool bGray)//ç°åº¦æ ‡è®°ï¼ŒTRUE-ç°åº¦ï¼ŒFALSE-å½©è‰²
+			bool bGray)//»Ò¶È±ê¼Ç£¬TRUE-»Ò¶È£¬FALSE-²ÊÉ«
 {
     int i;
 	ASSERT(ThisImage);
     if( nvEY > nvSY )
          for(i=nvSY;i<=nvEY;i++)
-         //åœ¨åæ ‡(nvX,i)å¤„ç”»ç‚¹
+         //ÔÚ×ø±ê(nvX,i)´¦»­µã
           PutPixel(ThisImage,W,H, nvX,i,Color,bGray);
     else
          for(i=nvEY;i<=nvSY;i++)
-        //åœ¨åæ ‡(nvX,i)å¤„ç”»ç‚¹
+        //ÔÚ×ø±ê(nvX,i)´¦»­µã
          PutPixel(ThisImage,W,H, nvX,i,Color,bGray);
 }
 /*******************************************************************/
-//ç”»çŸ©å½¢è¾¹æ¡†
+//»­¾ØĞÎ±ß¿ò
 /*******************************************************************/
 DLL_EXP void DrawRectangle(
-	aBYTE* ThisImage,int W,int H,//æ˜¾ç¤ºå›¾ç‰‡æŒ‡é’ˆåŠå¤§å°
-	aRect rc,//çŸ©å½¢åŒºåŸŸ
-	COLORREF Color,//è¾¹æ¡†é¢œè‰²ï¼ŒYUVæ ¼å¼
-	bool bGray//ç°åº¦æ ‡è®°ï¼ŒTRUE-ç°åº¦ï¼ŒFALSE-å½©è‰²
+	aBYTE* ThisImage,int W,int H,//ÏÔÊ¾Í¼Æ¬Ö¸Õë¼°´óĞ¡
+	aRect rc,//¾ØĞÎÇøÓò
+	COLORREF Color,//±ß¿òÑÕÉ«£¬YUV¸ñÊ½
+	bool bGray//»Ò¶È±ê¼Ç£¬TRUE-»Ò¶È£¬FALSE-²ÊÉ«
 	)
 {
 	ASSERT(ThisImage);
    
-	DrawHLine(ThisImage,W,H,rc.left,RECT_RIGHT(rc),rc.top,Color,bGray); //ä¸Šè¾¹
-	DrawVLine(ThisImage,W,H,rc.left,rc.top,RECT_BOTTOM(rc),Color,bGray); //å·¦è¾¹
-	DrawHLine(ThisImage,W,H,rc.left,RECT_RIGHT(rc),RECT_BOTTOM(rc),Color,bGray); //ä¸‹è¾¹
-	DrawVLine(ThisImage,W,H,RECT_RIGHT(rc),rc.top,RECT_BOTTOM(rc),Color,bGray); //å³è¾¹
+	DrawHLine(ThisImage,W,H,rc.left,RECT_RIGHT(rc),rc.top,Color,bGray); //ÉÏ±ß
+	DrawVLine(ThisImage,W,H,rc.left,rc.top,RECT_BOTTOM(rc),Color,bGray); //×ó±ß
+	DrawHLine(ThisImage,W,H,rc.left,RECT_RIGHT(rc),RECT_BOTTOM(rc),Color,bGray); //ÏÂ±ß
+	DrawVLine(ThisImage,W,H,RECT_RIGHT(rc),rc.top,RECT_BOTTOM(rc),Color,bGray); //ÓÒ±ß
 }
 /*******************************************************************/
-//ç”»"åå­—"
+//»­"Ê®×Ö"
 /*******************************************************************/
 DLL_EXP void DrawCross(
-	aBYTE* ThisImage,int W,int H,//æ˜¾ç¤ºå›¾ç‰‡æŒ‡é’ˆåŠå¤§å°
-	int nvX,int nvY,//â€œåå­—â€ä¸­å¿ƒç‚¹åæ ‡
-	int nSize,      //â€œåå­—â€å¤§å°
-	COLORREF Color, //è¾¹æ¡†é¢œè‰²ï¼ŒYUVæ ¼å¼
+	aBYTE* ThisImage,int W,int H,//ÏÔÊ¾Í¼Æ¬Ö¸Õë¼°´óĞ¡
+	int nvX,int nvY,//¡°Ê®×Ö¡±ÖĞĞÄµã×ø±ê
+	int nSize,      //¡°Ê®×Ö¡±´óĞ¡
+	COLORREF Color, //±ß¿òÑÕÉ«£¬YUV¸ñÊ½
 	bool bGray)
 {    
 	ASSERT(ThisImage);
-	DrawHLine(ThisImage,W,H,nvX-nSize,nvX+nSize,nvY,Color,bGray);//æ°´å¹³ç›´çº¿
-	DrawVLine(ThisImage,W,H,nvX,nvY-nSize,nvY+nSize,Color,bGray);//å‚ç›´ç›´çº¿
+	DrawHLine(ThisImage,W,H,nvX-nSize,nvX+nSize,nvY,Color,bGray);//Ë®Æ½Ö±Ïß
+	DrawVLine(ThisImage,W,H,nvX,nvY-nSize,nvY+nSize,Color,bGray);//´¹Ö±Ö±Ïß
 }
 
 
 /*******************************************************************/
-//ç°åº¦å›¾åƒåŒçº¿æ€§å†…æ’æ³•é‡é‡‡æ ·
+//»Ò¶ÈÍ¼ÏñË«ÏßĞÔÄÚ²å·¨ÖØ²ÉÑù
 /*******************************************************************/
 bool GrayLinearIns(
-				   aBYTE* ThisImage,int Width,int Height,//æºå›¾ç‰‡æŒ‡é’ˆåŠå¤§å°
-				   int ResWidth,int ResHeight,//ç›®æ ‡å›¾ç‰‡å¤§å°
-				   aBYTE* result)//ç›®æ ‡å›¾ç‰‡æŒ‡é’ˆ
+				   aBYTE* ThisImage,int Width,int Height,//Ô´Í¼Æ¬Ö¸Õë¼°´óĞ¡
+				   int ResWidth,int ResHeight,//Ä¿±êÍ¼Æ¬´óĞ¡
+				   aBYTE* result)//Ä¿±êÍ¼Æ¬Ö¸Õë
 {
     UINT i,j,u,v,k,l,gray=0;
     UINT x=0,y=0,tempx=0,tempy=0;
@@ -257,23 +257,23 @@ bool GrayLinearIns(
     ColLookup = (LookupCell*)myHeapAlloc(ResWidth*sizeof(LookupCell));
     for(v=0;v<ResHeight;v++)
 	{   RowLookup[v].x = v*100*(Height-1)/(ResHeight-1);
-        RowLookup[v].i = RowLookup[v].x/100;//å·¦è¾¹ç‚¹
+        RowLookup[v].i = RowLookup[v].x/100;//×ó±ßµã
         if( RowLookup[v].i>=Height-1 )	RowLookup[v].i = Height-2;
-        RowLookup[v].k = RowLookup[v].i+1;//å³è¾¹ç‚¹
-        //è·Ÿå³è¾¹ç‚¹è·ç¦»ï¼ˆæ¯”ä¾‹ï¼‰ï¼Œç›¸é‚»ä¸¤åƒç´ è·ç¦»ä¸º100
+        RowLookup[v].k = RowLookup[v].i+1;//ÓÒ±ßµã
+        //¸úÓÒ±ßµã¾àÀë£¨±ÈÀı£©£¬ÏàÁÚÁ½ÏñËØ¾àÀëÎª100
 		RowLookup[v].ksx = RowLookup[v].k*100-RowLookup[v].x;
-        //è·Ÿå·¦è¾¹ç‚¹è·ç¦»ï¼Œ
+        //¸ú×ó±ßµã¾àÀë£¬
         RowLookup[v].xsi = RowLookup[v].x-RowLookup[v].i*100;
     }
     for(u=0;u<ResWidth;u++)
 	{   ColLookup[u].x = u*100*(Width-1)/(ResWidth-1);
-        ColLookup[u].i = ColLookup[u].x/100;//ä¸Šè¾¹ç‚¹
+        ColLookup[u].i = ColLookup[u].x/100;//ÉÏ±ßµã
         if( ColLookup[u].i>=Width-1 )	ColLookup[u].i = Width-2;
-        ColLookup[u].k = ColLookup[u].i+1;//ä¸‹è¾¹ç‚¹
-        ColLookup[u].ksx = ColLookup[u].k*100-ColLookup[u].x;//è·Ÿä¸‹è¾¹ç‚¹è·ç¦»
-        ColLookup[u].xsi = ColLookup[u].x-ColLookup[u].i*100;//è·Ÿä¸Šè¾¹ç‚¹è·ç¦»
+        ColLookup[u].k = ColLookup[u].i+1;//ÏÂ±ßµã
+        ColLookup[u].ksx = ColLookup[u].k*100-ColLookup[u].x;//¸úÏÂ±ßµã¾àÀë
+        ColLookup[u].xsi = ColLookup[u].x-ColLookup[u].i*100;//¸úÉÏ±ßµã¾àÀë
     }
-    //åŒçº¿æ€§å†…æ’æ³•
+    //Ë«ÏßĞÔÄÚ²å·¨
     for(v=0;v<ResHeight;v++){
         for(u=0;u<ResWidth;u++){
             i = ColLookup[u].i;
@@ -297,12 +297,12 @@ bool GrayLinearIns(
     return true;
 }
 /*******************************************************************/
-//å½©è‰²å›¾åƒåŒçº¿æ€§å†…æ’æ³•é‡é‡‡æ ·
+//²ÊÉ«Í¼ÏñË«ÏßĞÔÄÚ²å·¨ÖØ²ÉÑù
 /*******************************************************************/
 bool ColorLinearIns(
-					aBYTE* ThisImage,int Width,int Height,//æºå›¾ç‰‡æŒ‡é’ˆåŠå¤§å°
-					int ResWidth,int ResHeight,//ç›®æ ‡å›¾ç‰‡å¤§å°
-					aBYTE* result//ç›®æ ‡å›¾ç‰‡æŒ‡é’ˆ
+					aBYTE* ThisImage,int Width,int Height,//Ô´Í¼Æ¬Ö¸Õë¼°´óĞ¡
+					int ResWidth,int ResHeight,//Ä¿±êÍ¼Æ¬´óĞ¡
+					aBYTE* result//Ä¿±êÍ¼Æ¬Ö¸Õë
 					)
 {
 	ASSERT(result);
@@ -313,13 +313,13 @@ bool ColorLinearIns(
 	return true;
 }
 /*******************************************************************/
-//é‡é‡‡æ ·
+//ÖØ²ÉÑù
 /*******************************************************************/
-DLL_EXP bool ReSample(aBYTE* ThisImage,int Width,int Height,//æºå›¾ç‰‡æŒ‡é’ˆåŠå¤§å°
-					  int newWidth,int newHeight,//ç›®æ ‡å›¾ç‰‡å¤§å°
-					  bool InsMode,//trueï¼šåŒçº¿æ€§å†…æ’æ³•ï¼Œfalseï¼šé‚»è¿‘ç‚¹é‡‡æ ·æ³•
-					  bool bGray,//trueï¼šç°åº¦å›¾ç‰‡é‡‡æ ·ï¼Œfalseï¼šå½©è‰²å›¾ç‰‡é‡‡æ ·
-					  aBYTE *result//ç›®æ ‡å›¾ç‰‡æŒ‡é’ˆ
+DLL_EXP bool ReSample(aBYTE* ThisImage,int Width,int Height,//Ô´Í¼Æ¬Ö¸Õë¼°´óĞ¡
+					  int newWidth,int newHeight,//Ä¿±êÍ¼Æ¬´óĞ¡
+					  bool InsMode,//true£ºË«ÏßĞÔÄÚ²å·¨£¬false£ºÁÚ½üµã²ÉÑù·¨
+					  bool bGray,//true£º»Ò¶ÈÍ¼Æ¬²ÉÑù£¬false£º²ÊÉ«Í¼Æ¬²ÉÑù
+					  aBYTE *result//Ä¿±êÍ¼Æ¬Ö¸Õë
 					  )
 {
     int *HSampleTable;
@@ -334,20 +334,20 @@ DLL_EXP bool ReSample(aBYTE* ThisImage,int Width,int Height,//æºå›¾ç‰‡æŒ‡é’ˆåŠ
         return true;
 	ASSERT(result);
     if( !InsMode )
-	{   //é‚»è¿‘ç‚¹é‡‡æ ·æ³•
+	{   //ÁÚ½üµã²ÉÑù·¨
         HSampleTable = (int*)myHeapAlloc(newWidth*sizeof(int));
        	VSampleTable = (int*)myHeapAlloc(newHeight*sizeof(int));
-        //é‚»è¿‘ç‚¹Xåæ ‡å‘é‡
+        //ÁÚ½üµãX×ø±êÏòÁ¿
 		for(i=0;i<newWidth;i++)
 		{ HSampleTable[i] = int(float(i)*rsWRatio);
           if( HSampleTable[i]>Width-1 ) HSampleTable[i] = Width-1;
 		}
-        //é‚»è¿‘ç‚¹Yåæ ‡å‘é‡
+        //ÁÚ½üµãY×ø±êÏòÁ¿
         for(i=0;i<newHeight;i++)
 		{   VSampleTable[i] = int(float(i)*rsHRatio);
             if( VSampleTable[i]>Height-1 ) VSampleTable[i] = Height-1;
         }
-		//Yåˆ†é‡
+		//Y·ÖÁ¿
         lpDes = result;
         lpSrc = ThisImage;
         for(j=0;j<newHeight;j++)
@@ -368,7 +368,7 @@ DLL_EXP bool ReSample(aBYTE* ThisImage,int Width,int Height,//æºå›¾ç‰‡æŒ‡é’ˆåŠ
             lpLineDes = lpDes+j*newWidth/2;
             for(i=0;i<newWidth/2;i++) lpLineDes[i] = lpLineSrc[HSampleTable[i*2]/2];
         }
-		//Våˆ†é‡
+		//V·ÖÁ¿
         lpDes += newWidth*newHeight/2;
         lpSrc += Width*Height/2;
         for(j=0;j<newHeight;j++)
@@ -380,7 +380,7 @@ DLL_EXP bool ReSample(aBYTE* ThisImage,int Width,int Height,//æºå›¾ç‰‡æŒ‡é’ˆåŠ
         myHeapFree((aBYTE*)HSampleTable);
     }
     else
-	{   //åŒçº¿æ€§å†…æ’æ³•
+	{   //Ë«ÏßĞÔÄÚ²å·¨
         if( bGray )	GrayLinearIns(ThisImage,Width,Height,newWidth,newHeight,result);
 		else		ColorLinearIns(ThisImage,Width,Height,newWidth,newHeight,result);
     }

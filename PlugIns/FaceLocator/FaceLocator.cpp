@@ -52,21 +52,21 @@ CFaceLocatorApp::CFaceLocatorApp()
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CFaceLocatorApp object
 CFaceLocatorApp theApp;
-char sInfo[] = "äººè„¸è·Ÿè¸ª-åŸºäºå½©è‰²ä¿¡æ¯çš„äººè„¸åˆ†å‰²å¤„ç†æ’ä»¶";
+char sInfo[] = "ÈËÁ³¸ú×Ù-»ùÓÚ²ÊÉ«ĞÅÏ¢µÄÈËÁ³·Ö¸î´¦Àí²å¼ş";
 bool bLastPlugin = false;
 DLL_EXP void ON_PLUGIN_BELAST(bool bLast)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	bLastPlugin = bLast;
 }
 DLL_EXP LPCTSTR ON_PLUGININFO(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	return sInfo;
 }
 DLL_EXP void ON_INITPLUGIN(LPVOID lpParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.Create(IDD_PLUGIN_SETUP);
 	//theApp.dlg.ShowWindow(SW_HIDE);
 }
@@ -86,30 +86,30 @@ DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 	return nRet;
 }
 /****************************************************************************************/
-/*                             äººè„¸æ£€æµ‹ä¸å®šä½                                           */
+/*                             ÈËÁ³¼ì²âÓë¶¨Î»                                           */
 /****************************************************************************************/
 
 DDL_EXP void Erosion(aBYTE* tempImg, int width, int height,int N){
 	int i,j,k,flag;
-	//åˆ†é…ä¸€ä¸ªä¸´æ—¶å˜é‡
+	//·ÖÅäÒ»¸öÁÙÊ±±äÁ¿
 	aBYTE *tempImg1=myHeapAlloc(width*height);
-	//å…ˆå¤åˆ¶ä¸¤æŒ‡é’ˆæŒ‡å‘çš„å†…å®¹,ä¿ç•™è¾¹ç•Œåƒç´ 
+	//ÏÈ¸´ÖÆÁ½Ö¸ÕëÖ¸ÏòµÄÄÚÈİ,±£Áô±ß½çÏñËØ
 	memcpy(tempImg1,tempImg,width*height*sizeof(aBYTE));
-	//è¡Œå¤„ç†
+	//ĞĞ´¦Àí
 	for(i=0;i<height;i++)
 	{
-	//ä¸ºäº†é˜²æ­¢è¶Šç•Œ,ä¸å¤„ç†è¾¹ç•Œn/2ä¸ªåƒç´ 
+	//ÎªÁË·ÀÖ¹Ô½½ç,²»´¦Àí±ß½çn/2¸öÏñËØ
 	for(j=N/2;j<width-N/2;j++)
 	{
 	flag=1;
 	for(k=0;k<N;k++)
 	if(tempImg[i*width+j-N/2+k]==0)
 	{
-	//ä¸€æ—¦åœ¨ç»“æ„å…ƒåŒºåŸŸå†…æ‰¾åˆ°ä¸€ä¸ªé»‘è‰²åŒºåŸŸ,æ ‡è®°è…èš€å¹¶é€€å‡ºå¾ªç¯
+	//Ò»µ©ÔÚ½á¹¹ÔªÇøÓòÄÚÕÒµ½Ò»¸öºÚÉ«ÇøÓò,±ê¼Ç¸¯Ê´²¢ÍË³öÑ­»·
 	flag=0;
 	break;
 	}
-	tempImg1[i*width+j]=flag?255:0;//æ ¹æ®flagå†³å®šæ˜¯å¦è…èš€
+	tempImg1[i*width+j]=flag?255:0;//¸ù¾İflag¾ö¶¨ÊÇ·ñ¸¯Ê´
 	}
 	}
 
@@ -174,22 +174,22 @@ DLL_EXP void Dilation(aBYTE* tempImg,int width,int height,int N){
 DLL_EXP int RegionLabel(aBYTE* tempImg,int width,int height){
 	int i,classnum,L=0;
 	int Lmax,Lmin;
-	int LK[1024],LK1[1024];//ç­‰ä»·è¡¨
+	int LK[1024],LK1[1024];//µÈ¼Û±í
 	int Left=0,Up=0;
 	for(i=0;i<1024;i++)
 	LK[i]=i;
-	WORD* tempLabel=(WORD*)myHeapAlloc(width*height*sizeof(WORD));//WORDå‹å˜é‡ä¸ºä¸¤ä¸ªå­—èŠ‚
+	WORD* tempLabel=(WORD*)myHeapAlloc(width*height*sizeof(WORD));//WORDĞÍ±äÁ¿ÎªÁ½¸ö×Ö½Ú
 
 	for(i=0;i<width*height;i++){
 		if(tempImg[i]!=0){
 			if(i<width||tempImg[i-width]==0){
-				if(i%width==0||tempImg[i-1]==0)//å·¦è¾¹ä¹Ÿæ˜¯é»‘ç‚¹,åˆ¤å®šä¸€ä¸ªæ–°åŒºåŸŸ
+				if(i%width==0||tempImg[i-1]==0)//×ó±ßÒ²ÊÇºÚµã,ÅĞ¶¨Ò»¸öĞÂÇøÓò
 				tempLabel[i]=++L;
 				else tempLabel[i]=tempLabel[i-1];
 			}
 			else{
 				if(i%width==0||tempImg[i-1]==0)
-				tempLabel[i]=tempLabel[i-width];//å¤åˆ¶ä¸Šè¾¹æ ‡å·
+				tempLabel[i]=tempLabel[i-width];//¸´ÖÆÉÏ±ß±êºÅ
 				else if(tempLabel[i-width]==tempLabel[i-1])
 				tempLabel[i]=tempLabel[i-width];
 				else {
@@ -217,12 +217,12 @@ DLL_EXP int RegionLabel(aBYTE* tempImg,int width,int height){
 	while(Lmax!=LK[Lmax])
 	Lmax=LK[Lmax];
 	}
-	//è¿é€šåŒºåŸŸé‡æ–°åˆ†ç±»
+	//Á¬Í¨ÇøÓòÖØĞÂ·ÖÀà
 	for(LK1[0]=0,i=1,classnum=1;i<=L;i++)
 	if(i==LK[i])
 	LK1[i]=classnum++;
 	else LK1[i]=LK1[LK[i]];
-	//å›¾ç‰‡ä»£æ¢,æ³¨æ„æœ€ç»ˆè¿é€šåŸŸæ ‡å·ä¸èƒ½å¤§äº255
+	//Í¼Æ¬´ú»»,×¢Òâ×îÖÕÁ¬Í¨Óò±êºÅ²»ÄÜ´óÓÚ255
 	for(i=0;i<width*height;i++)
 	tempImg[i]=LK1[tempLabel[i]];
 	myHeapFree((aBYTE*)tempLabel);
@@ -232,14 +232,14 @@ DLL_EXP int RegionLabel(aBYTE* tempImg,int width,int height){
 
 DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYTE* pBuffer)
 {
-//pYBits å¤§å°ä¸ºw*h
-//pUBits å’Œ pVBits çš„å¤§å°ä¸º w*h/2
-//pBuffer çš„å¤§å°ä¸º w*h*4
-//ä¸‹é¢ç®—æ³•éƒ½åŸºäºä¸€ä¸ªå‡è®¾ï¼Œå³wæ˜¯16çš„å€æ•°
+//pYBits ´óĞ¡Îªw*h
+//pUBits ºÍ pVBits µÄ´óĞ¡Îª w*h/2
+//pBuffer µÄ´óĞ¡Îª w*h*4
+//ÏÂÃæËã·¨¶¼»ùÓÚÒ»¸ö¼ÙÉè£¬¼´wÊÇ16µÄ±¶Êı
 
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	
-    //è¯·ç¼–å†™ç›¸åº”å¤„ç†ç¨‹åº
+    //Çë±àĞ´ÏàÓ¦´¦Àí³ÌĞò
 	int i,j,max; 
 	int pixelnum[256]={0};
 	int minx,miny,maxx,maxy;
@@ -268,8 +268,8 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 	Erosion(tempImg,w/4,h/4,7);
 
 	RegionLabel(tempImg,w/4,h/4);
-	//5äººè„¸åŒºåŸŸå®šä½åŠæ˜¾ç¤º
-	//ç»Ÿè®¡å„è¿é€šåŸŸåƒç´ æ€»æ•°
+	//5ÈËÁ³ÇøÓò¶¨Î»¼°ÏÔÊ¾
+	//Í³¼Æ¸÷Á¬Í¨ÓòÏñËØ×ÜÊı
 	for(i=0;i<w*h/16;i++)
 		pixelnum[tempImg[i]]++;
 
@@ -291,7 +291,7 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 				if(i<minx)minx=i;
 				if(i>maxx)maxx=i;
 				if(j<miny)miny=j;
-				if(j>maxy)maxy=j;//ç¬¬ä¸€æ¬¡å†™é”™äº†å¯¼è‡´ç”»æ–¹æ¡†ä¸å‡†ç¡®
+				if(j>maxy)maxy=j;//µÚÒ»´ÎĞ´´íÁËµ¼ÖÂ»­·½¿ò²»×¼È·
 			}
 			else tempImg[j*w/4+i]=0;
 		}
@@ -317,11 +317,11 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 		false
 	);
 
-	CopyToRect(BUF->clrBmp_1d8,//æºå›¾ç‰‡æŒ‡é’ˆ
-		pYBits,//ç›®æ ‡å›¾ç‰‡æŒ‡é’ˆ,ç”¨displayimageä¼šæŠ¥é”™
-		3 20,120,//åŒºåŸŸå›¾ç‰‡å¤§å°
-		6 40,480,//ç›®æ ‡å›¾ç‰‡å¤§å°
-		1 ,360,//åŒºåŸŸä½ç½®:å›¾ç‰‡å·¦ä¸Šè§’åœ¨ç›®æ ‡å›¾ç‰‡çš„åæ ‡
+	CopyToRect(BUF->clrBmp_1d8,//Ô´Í¼Æ¬Ö¸Õë
+		pYBits,//Ä¿±êÍ¼Æ¬Ö¸Õë,ÓÃdisplayimage»á±¨´í
+		3 20,120,//ÇøÓòÍ¼Æ¬´óĞ¡
+		6 40,480,//Ä¿±êÍ¼Æ¬´óĞ¡
+		1 ,360,//ÇøÓòÎ»ÖÃ:Í¼Æ¬×óÉÏ½ÇÔÚÄ¿±êÍ¼Æ¬µÄ×ø±ê
 		false);
 	myHeapFree(tempImg);
 
@@ -329,7 +329,7 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 
 DLL_EXP void ON_PLUGINEXIT()
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//æ¨¡å—çŠ¶æ€åˆ‡æ¢
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());//Ä£¿é×´Ì¬ÇĞ»»
 	//theApp.dlg.DestroyWindow();
 }
 

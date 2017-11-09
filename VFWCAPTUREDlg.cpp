@@ -154,16 +154,16 @@ BOOL CVFWCAPTUREDlg::OnInitDialog()
     //InitMessageOpFunction(&AddMessageToList);
 	
 	HANDLE hFind = NULL;
-	WIN32_FIND_DATA w32fd;//struct,å­˜æ”¾æ–‡ä»¶çš„9ç§å±æ€§ä¿¡æ¯
+	WIN32_FIND_DATA w32fd;//struct,´æ·ÅÎÄ¼şµÄ9ÖÖÊôĞÔĞÅÏ¢
 	char path[256];
-	GetModuleFileName(NULL,path,256);//æ•°è¿”å›è¯¥å½“å‰åº”ç”¨ç¨‹åºå…¨è·¯å¾„
+	GetModuleFileName(NULL,path,256);//Êı·µ»Ø¸Ãµ±Ç°Ó¦ÓÃ³ÌĞòÈ«Â·¾¶
 	char sDrv[256],sDir[256],sFname[256],sExt[256];
-	_splitpath(path,sDrv,sDir,sFname,sExt);//åˆ†è§£è·¯å¾„
-   	_makepath(path,sDrv,sDir,"","");//ç”Ÿæˆè·¯å¾„
-	strncpy(sDir,path,256);//å­—ç¬¦ä¸²è”æ¥
+	_splitpath(path,sDrv,sDir,sFname,sExt);//·Ö½âÂ·¾¶
+   	_makepath(path,sDrv,sDir,"","");//Éú³ÉÂ·¾¶
+	strncpy(sDir,path,256);//×Ö·û´®Áª½Ó
 	//strncpy(path,sWorkDir,256);
-	strncat(path,"PlugIn\\*.dll",256);//å­—ç¬¦ä¸²è”æ¥
-	hFind = FindFirstFile(path,&w32fd);//æœç´¢æŒ‡å®šæ–‡ä»¶
+	strncat(path,"PlugIn\\*.dll",256);//×Ö·û´®Áª½Ó
+	hFind = FindFirstFile(path,&w32fd);//ËÑË÷Ö¸¶¨ÎÄ¼ş
 	if( hFind!=INVALID_HANDLE_VALUE && hFind!=0 )
 	{
 		do 
@@ -175,7 +175,7 @@ BOOL CVFWCAPTUREDlg::OnInitDialog()
 				strncpy(path,sDir,256);
 				strncat(path,"Plugin\\",256);
 				strncat(path,w32fd.cFileName,256);
-				//è·å–æ’ä»¶çš„å‡½æ•°æŒ‡é’ˆ
+				//»ñÈ¡²å¼şµÄº¯ÊıÖ¸Õë
 				AllPlugIns[nPlugInNum].OpenPlugIn(path);
 				if( AllPlugIns[nPlugInNum].bPlugInOk )
 				{
@@ -250,28 +250,28 @@ void CVFWCAPTUREDlg::OnStart()
 //	else
 //	{
 		CAPTUREPARMS m_CaptureParams;
-    //  åˆ›å»º"æ•è·çª—" 
+    //  ´´½¨"²¶»ñ´°" 
 		m_hCapture = capCreateCaptureWindow("cap",WS_EX_CONTROLPARENT|WS_CHILD|WS_VISIBLE,10,6,640,480,m_hWnd,0);
-	//	å…³è”æ•è·çª—å’Œé©±åŠ¨ç¨‹åº
+	//	¹ØÁª²¶»ñ´°ºÍÇı¶¯³ÌĞò
 		while(!capDriverConnect(m_hCapture,0));
 	//	capDriverConnect(m_hCapture,0);
-    //è®¾ç½®è§†é¢‘è®¾å¤‡çš„å±æ€§
+    //ÉèÖÃÊÓÆµÉè±¸µÄÊôĞÔ
 		capCaptureGetSetup(m_hCapture,&m_CaptureParams,sizeof(m_CaptureParams));
 		m_CaptureParams.fYield = TRUE;
 		capCaptureSetSetup(m_hCapture,&m_CaptureParams,sizeof(m_CaptureParams));
-   //   æ‰“å¼€é¢„è§ˆ
+   //   ´ò¿ªÔ¤ÀÀ
 		capOverlay(m_hCapture,IsDlgButtonChecked(IDC_OVERPLAY));
-   //   è®¾ç½®ç›¸åº”æŒ‰é’®ä¸ºæ´»åŠ¨çŠ¶æ€
+   //   ÉèÖÃÏàÓ¦°´Å¥Îª»î¶¯×´Ì¬
    		GetDlgItem(IDC_SAVEIMG)->EnableWindow(true);
 	   //	GetDlgItem(IDC_RECORD)->EnableWindow(TRUE);
-   //   ç¦æ­¢â€œå¼€å§‹â€æŒ‰é’®
+   //   ½ûÖ¹¡°¿ªÊ¼¡±°´Å¥
 	    GetDlgItem(IDC_START)->EnableWindow(false);
-   //  å®šä¹‰ä¸€ä¸ªå¸§æ•è·å›è°ƒå‡½æ•°
+   //  ¶¨ÒåÒ»¸öÖ¡²¶»ñ»Øµ÷º¯Êı
 		if( capSetCallbackOnFrame(m_hCapture,(LPVOID)VideoCallbackProc) )
 		 AddLogInfo("Success install capture callback!");
 
-   // è·å–è§†é¢‘å‚æ•°
-        DWORD dwSize = capGetVideoFormatSize(m_hCapture);//è§†é¢‘å‚æ•°å¤§å°
+   // »ñÈ¡ÊÓÆµ²ÎÊı
+        DWORD dwSize = capGetVideoFormatSize(m_hCapture);//ÊÓÆµ²ÎÊı´óĞ¡
 		BYTE* pBuffer = new BYTE[dwSize];
 		capGetVideoFormat(m_hCapture,pBuffer,dwSize);
 	//
@@ -284,15 +284,15 @@ void CVFWCAPTUREDlg::OnStart()
 		m_nVideoWidth = nVideoW;
 		m_nVideoHeight = nVideoH;
 		m_sVideoFmt.Format("0x%x",dwFormat);   
-	//è®¾ç½®33mså®šæ—¶å™¨
+	//ÉèÖÃ33ms¶¨Ê±Æ÷
 	    SetTimer(1,33,NULL);
-	//åˆ·æ–°çª—å£
+	//Ë¢ĞÂ´°¿Ú
 		UpdateData(false);
 }
 void  CVFWCAPTUREDlg::OnTimer(UINT nIDEvent) 
 {
 	// TODO: Add your message handler code here and/or call default
-	//æŠ“å–ä¸€å¸§å›¾åƒæ•°æ®,ä¸capGrabFrameç›¸æ¯”,å®ƒä¸ä¼šåœæ­¢é¢„è§ˆæ¨¡å¼å’Œé‡å 
+	//×¥È¡Ò»Ö¡Í¼ÏñÊı¾İ,ÓëcapGrabFrameÏà±È,Ëü²»»áÍ£Ö¹Ô¤ÀÀÄ£Ê½ºÍÖØµş
  	capGrabFrameNoStop(m_hCapture);
 	CDialog::OnTimer(nIDEvent);
 }
@@ -301,7 +301,7 @@ void  CVFWCAPTUREDlg::OnTimer(UINT nIDEvent)
 LRESULT CALLBACK CVFWCAPTUREDlg::VideoCallbackProc(HWND hWnd, LPVOID lpVHdr)
 {
 	 LPVIDEOHDR pVHdr = (LPVIDEOHDR)lpVHdr;
-     //åˆ›å»ºå­˜å‚¨YUV2å¹³é¢æ ¼å¼çš„ç ´ç©ºé—´
+     //´´½¨´æ´¢YUV2Æ½Ãæ¸ñÊ½µÄÆÆ¿Õ¼ä
      BYTE* pY = new BYTE[nVideoW*nVideoH*2];
 	 BYTE* pU = pY+nVideoW*nVideoH;
 	 BYTE* pV = pU+nVideoW*nVideoH/2;
@@ -314,9 +314,9 @@ LRESULT CALLBACK CVFWCAPTUREDlg::VideoCallbackProc(HWND hWnd, LPVOID lpVHdr)
 						{
 						pImgProcBuf = new BYTE[nVideoW*nVideoH*4];
 						if( !pImgProcBuf )	return (LRESULT)FALSE;
-						((BUF_STRUCT*)pImgProcBuf)->bNotInited = true;//è®¾ç½®åˆå§‹åŒ–æ ‡è®°
+						((BUF_STRUCT*)pImgProcBuf)->bNotInited = true;//ÉèÖÃ³õÊ¼»¯±ê¼Ç
 						}
-			//è½¬æ¢åˆ°YUV2å¹³é¢æ ¼å¼
+			//×ª»»µ½YUV2Æ½Ãæ¸ñÊ½
 			if	 (dwFormat== YUV2)
 			theDlg->SplitYUVData(nVideoW,nVideoH,pVHdr->lpData,pY,pU,pV);
             if	 (dwFormat== RGB24)
@@ -324,30 +324,30 @@ LRESULT CALLBACK CVFWCAPTUREDlg::VideoCallbackProc(HWND hWnd, LPVOID lpVHdr)
 		}
 		else
         {
-		theDlg->AddLogInfo("æœªçŸ¥çš„è§†é¢‘æ ¼å¼---%d,frame_size=%d,video_size=%d",dwFormat,pVHdr->dwBufferLength,nVideoW*nVideoH);
+		theDlg->AddLogInfo("Î´ÖªµÄÊÓÆµ¸ñÊ½---%d,frame_size=%d,video_size=%d",dwFormat,pVHdr->dwBufferLength,nVideoW*nVideoH);
 					return FALSE;
 		}
  //
 			
-					//æ‰¾å‡ºæœ€åæœ‰æ•ˆæ’ä»¶
+					//ÕÒ³ö×îºóÓĞĞ§²å¼ş
 			        int theLast=-1;
 					for(int i=0;i<theDlg->nPlugInNum;i++)
 					{
 						theDlg->AllPlugIns[i].OnPlugInBeLast(false);
-						//strncmp å­—ç¬¦ä¸²s1ä¸s2çš„å‰sizeä¸ªå­—ç¬¦ç›¸åŒï¼Œå‡½æ•°è¿”å›å€¼ä¸º0
+						//strncmp ×Ö·û´®s1Óës2µÄÇ°size¸ö×Ö·ûÏàÍ¬£¬º¯Êı·µ»ØÖµÎª0
 						if( theDlg->AllPlugIns[i].Enabled() && strncmp(theDlg->AllPlugIns[i].sName,"PZ_FinalProc.dll",16)!=0 )
 							{
 							theLast = i;
 							}
 					}
 					if( theLast>=0 )	theDlg->AllPlugIns[theLast].OnPlugInBeLast(true);
-					//ä¾æ¬¡è°ƒç”¨æ‰€æœ‰æ’ä»¶å¤„ç†
+					//ÒÀ´Îµ÷ÓÃËùÓĞ²å¼ş´¦Àí
 					for(  i=0;i<theDlg->nPlugInNum;i++)
 					{
 						if( theDlg->AllPlugIns[i].Enabled() )
 							theDlg->AllPlugIns[i].OnPlugInRun(nVideoW,nVideoH,pY,pU,pV,pImgProcBuf);
 					}
-					//å¤„ç†å®Œæ¯•çš„å›¾åƒæ•°æ®è½¬æ¢å›æ¥æ˜¾ç¤º
+					//´¦ÀíÍê±ÏµÄÍ¼ÏñÊı¾İ×ª»»»ØÀ´ÏÔÊ¾
                 if	 (dwFormat== YUV2)
 					theDlg->CombineYUVData(nVideoW,nVideoH,pVHdr->lpData,pY,pU,pV);
                 if	 (dwFormat== RGB24)
@@ -361,17 +361,17 @@ LRESULT CALLBACK CVFWCAPTUREDlg::VideoCallbackProc(HWND hWnd, LPVOID lpVHdr)
 //
 void CVFWCAPTUREDlg::AddLogInfo(LPCTSTR sMessage, ...)
 {
-	//å®šä¹‰ä¸€å…·VA_LISTå‹çš„å˜é‡ï¼Œè¿™ä¸ªå˜é‡æ˜¯æŒ‡å‘å‚æ•°çš„æŒ‡é’ˆ,typedef char *  va_list;
+	//¶¨ÒåÒ»¾ßVA_LISTĞÍµÄ±äÁ¿£¬Õâ¸ö±äÁ¿ÊÇÖ¸Ïò²ÎÊıµÄÖ¸Õë,typedef char *  va_list;
 	va_list ap;
 	char sBuffer[1024];
-    //VA_STARTå®åˆå§‹åŒ–VA_LISTå˜é‡, ( ap = (va_list)&v + _INTSIZEOF(v) ) å³æŒ‡å‘ç¬¬ä¸€ä¸ªå˜å‚çš„ä½ç½®
+    //VA_STARTºê³õÊ¼»¯VA_LIST±äÁ¿, ( ap = (va_list)&v + _INTSIZEOF(v) ) ¼´Ö¸ÏòµÚÒ»¸ö±ä²ÎµÄÎ»ÖÃ
 	va_start(ap, sMessage);
-    /*é€æ ¼å¼åŒ–è¾“å‡ºåˆ°å­—ç¬¦ä¸²ä¸­,int vsprintf(char *string,char *format,va_list param);
-	vsprintf()å‡½æ•°ä¸­çš„è‡ªå˜é‡æ˜¯ä½äºæ•°ç»„ä¸­çš„ï¼Œæ•°ç»„å…ƒç´ çš„å­—ç¬¦ä¸²ä¹‹å‰éƒ½è¦åŠ ä¸Šç™¾åˆ†å·(%).
-	è¿™ä¸ªå‡½æ•°æ˜¯â€œä¸€æ­¥ä¸€æ­¥â€æŒ‰é¡ºåºæ‰§è¡Œçš„ã€‚åœ¨ç¬¬ä¸€ä¸ªç™¾åˆ†å·ï¼ˆ%ï¼‰åï¼Œå°†æ’å…¥ç¬¬ä¸€ä¸ªæ•°ç»„å…ƒç´ ï¼›
-	åœ¨ç¬¬äºŒä¸ª%å·åå°†æ’å…¥ç¬¬äºŒä¸ªæ•°ç»„å…ƒç´ ï¼Œä¾æ¬¡ç±»æ¨ã€‚*/
+    /*ËÍ¸ñÊ½»¯Êä³öµ½×Ö·û´®ÖĞ,int vsprintf(char *string,char *format,va_list param);
+	vsprintf()º¯ÊıÖĞµÄ×Ô±äÁ¿ÊÇÎ»ÓÚÊı×éÖĞµÄ£¬Êı×éÔªËØµÄ×Ö·û´®Ö®Ç°¶¼Òª¼ÓÉÏ°Ù·ÖºÅ(%).
+	Õâ¸öº¯ÊıÊÇ¡°Ò»²½Ò»²½¡±°´Ë³ĞòÖ´ĞĞµÄ¡£ÔÚµÚÒ»¸ö°Ù·ÖºÅ£¨%£©ºó£¬½«²åÈëµÚÒ»¸öÊı×éÔªËØ£»
+	ÔÚµÚ¶ş¸ö%ºÅºó½«²åÈëµÚ¶ş¸öÊı×éÔªËØ£¬ÒÀ´ÎÀàÍÆ¡£*/
 	vsprintf(sBuffer,sMessage,ap);
-	//æ¸…ç©ºva_listï¼Œå³ç»“æŸå˜å‚çš„è·å–
+	//Çå¿Õva_list£¬¼´½áÊø±ä²ÎµÄ»ñÈ¡
 	va_end(ap);
    //
  	m_List.SetCurSel(m_List.AddString(sBuffer));
@@ -383,7 +383,7 @@ void CVFWCAPTUREDlg::OnSaveimg()
 {
 	// TODO: Add your control notification handler code here
 	capFileSaveDIB(m_hCapture,"d:\\VFW_Cap.bmp");
-	AfxMessageBox("æ–‡ä»¶æˆåŠŸä¿å­˜åœ¨d:\\vfw_cap.bmp");
+	AfxMessageBox("ÎÄ¼ş³É¹¦±£´æÔÚd:\\vfw_cap.bmp");
 }
 void CVFWCAPTUREDlg::OnVfsetup() 
 {
@@ -409,12 +409,12 @@ void CVFWCAPTUREDlg::OnDspformat()
 void CVFWCAPTUREDlg::OnSelchangeList2() 
 {
 	// TODO: Add your control notification handler code here
-	//GetCurSel()è·å¾—å½“å‰é€‰æ‹©åºå·
-	//SetCheck()åªå¯¹å¤é€‰æ¡†ä¸å•é€‰æŒ‰é’®æœ‰æ•ˆï¼Œå®ƒæ˜¯ç”¨æ¥è®¾ç½®å¤é€‰æ¡†æˆ–å•é€‰æŒ‰é’®çš„çŠ¶æ€
+	//GetCurSel()»ñµÃµ±Ç°Ñ¡ÔñĞòºÅ
+	//SetCheck()Ö»¶Ô¸´Ñ¡¿òÓëµ¥Ñ¡°´Å¥ÓĞĞ§£¬ËüÊÇÓÃÀ´ÉèÖÃ¸´Ñ¡¿ò»òµ¥Ñ¡°´Å¥µÄ×´Ì¬
 	m_PluginEnable.SetCheck(AllPlugIns[m_PluginList.GetCurSel()].bEnabled);	
-	// EnableWindow(): ä½¿æŸä¸ªæ§ä»¶æˆ–çª—å£å¯ç”¨
+	// EnableWindow(): Ê¹Ä³¸ö¿Ø¼ş»ò´°¿Ú¿ÉÓÃ
 	m_PluginEnable.EnableWindow(TRUE);
-	AddLogInfo("æ’ä»¶ä¿¡æ¯:%s",AllPlugIns[m_PluginList.GetCurSel()].OnPlugInInfo());
+	AddLogInfo("²å¼şĞÅÏ¢:%s",AllPlugIns[m_PluginList.GetCurSel()].OnPlugInInfo());
 }
 void CVFWCAPTUREDlg::OnPluginEnable() 
 {	// TODO: Add your control notification handler code here
@@ -445,11 +445,11 @@ BOOL CVFWCAPTUREDlg::DestroyWindow()
 	capDriverDisconnect(m_hCapture);
 	return CDialog::DestroyWindow();
 }
-//å°†YUV422è§†é¢‘æ•°æ®æ ¼å¼ï¼ˆæŒ‰è±¡ç´ YUYVYUYV...ï¼‰è½¬æ¢ä¸ºYUV422å¹³é¢å›¾ç‰‡æ ¼å¼(æŒ‰Y-U-Vå­˜æ”¾)
+//½«YUV422ÊÓÆµÊı¾İ¸ñÊ½£¨°´ÏóËØYUYVYUYV...£©×ª»»ÎªYUV422Æ½ÃæÍ¼Æ¬¸ñÊ½(°´Y-U-V´æ·Å)
 void CVFWCAPTUREDlg::SplitYUVData(
-	int w,int h,//å›¾åƒå¤§å°
-	BYTE *pYUV, //YUV422è§†é¢‘å›¾åƒæŒ‡é’ˆ
-	BYTE *pY, BYTE *pU, BYTE *pV//YUV422å¹³é¢å›¾ç‰‡æŒ‡é’ˆ
+	int w,int h,//Í¼Ïñ´óĞ¡
+	BYTE *pYUV, //YUV422ÊÓÆµÍ¼ÏñÖ¸Õë
+	BYTE *pY, BYTE *pU, BYTE *pV//YUV422Æ½ÃæÍ¼Æ¬Ö¸Õë
 	)
 {
 	BYTE* pLine = pYUV;
@@ -458,7 +458,7 @@ void CVFWCAPTUREDlg::SplitYUVData(
 	BYTE* pLineV = pV;
 	for(int j=0;j<h;j++)
 	{
-		for(int i=0;i<w;i++)//ä¸€è¡Œå¤„ç†
+		for(int i=0;i<w;i++)//Ò»ĞĞ´¦Àí
 		{
 			pLineY[i] = pLine[i*2];
 		}
@@ -473,12 +473,12 @@ void CVFWCAPTUREDlg::SplitYUVData(
 		pLine += w*2;
 	}
 }
-//å°†YUV422å¹³é¢å›¾ç‰‡æ ¼å¼(æŒ‰Y-U-Vå­˜æ”¾)è½¬æ¢ä¸ºYUV422è§†é¢‘æ•°æ®æ ¼å¼ï¼ˆæŒ‰è±¡ç´ YUYVYUYV...ï¼‰
+//½«YUV422Æ½ÃæÍ¼Æ¬¸ñÊ½(°´Y-U-V´æ·Å)×ª»»ÎªYUV422ÊÓÆµÊı¾İ¸ñÊ½£¨°´ÏóËØYUYVYUYV...£©
 
 void CVFWCAPTUREDlg::CombineYUVData(
-	    int w, int h,//å›¾åƒå¤§å°
-		BYTE *pYUV, //YUV422è§†é¢‘å›¾åƒæŒ‡é’ˆ
-		BYTE *pY, BYTE *pU, BYTE *pV//YUV422å¹³é¢å›¾ç‰‡æŒ‡é’ˆ
+	    int w, int h,//Í¼Ïñ´óĞ¡
+		BYTE *pYUV, //YUV422ÊÓÆµÍ¼ÏñÖ¸Õë
+		BYTE *pY, BYTE *pU, BYTE *pV//YUV422Æ½ÃæÍ¼Æ¬Ö¸Õë
 		)
 {
 	BYTE* pLine = pYUV;
@@ -488,7 +488,7 @@ void CVFWCAPTUREDlg::CombineYUVData(
 	for(int j=0;j<h;j++)
 	{
 		//Y
-		for(int i=0;i<w;i++)//ä¸€è¡Œå¤„ç†
+		for(int i=0;i<w;i++)//Ò»ĞĞ´¦Àí
 		{
 			pLine[i*2] = pLineY[i];
 		}
@@ -501,20 +501,20 @@ void CVFWCAPTUREDlg::CombineYUVData(
 		pLineY += w;
 		pLineU += w/2;
 		pLineV += w/2;
-		pLine += w*2;//éš”è¡Œ
+		pLine += w*2;//¸ôĞĞ
 	}
 }
 
-//å°†YUV422å¹³é¢å›¾ç‰‡æ ¼å¼(æŒ‰Y-U-Vå­˜æ”¾)è½¬æ¢ä¸ºRGBè§†é¢‘æ•°æ®æ ¼å¼ï¼ˆæŒ‰è±¡ç´ RGBRGB...ï¼‰
+//½«YUV422Æ½ÃæÍ¼Æ¬¸ñÊ½(°´Y-U-V´æ·Å)×ª»»ÎªRGBÊÓÆµÊı¾İ¸ñÊ½£¨°´ÏóËØRGBRGB...£©
 void CVFWCAPTUREDlg::YUVtoRGB(
-	    int w, int h,//å›¾åƒå¤§å°
-		BYTE *pRGB, //YUV422è§†é¢‘å›¾åƒæŒ‡é’ˆ
-		BYTE *pY, BYTE *pU, BYTE *pV//YUV422å¹³é¢å›¾ç‰‡æŒ‡é’ˆ
+	    int w, int h,//Í¼Ïñ´óĞ¡
+		BYTE *pRGB, //YUV422ÊÓÆµÍ¼ÏñÖ¸Õë
+		BYTE *pY, BYTE *pU, BYTE *pV//YUV422Æ½ÃæÍ¼Æ¬Ö¸Õë
 		)
 {
 
-	BYTE* pLine = pRGB+w*(h-1)*3;//æŒ‡å‘RGBå›¾åƒçš„ç¬¬ä¸€è¡Œï¼Œå³å­˜å‚¨ç©ºé—´æœ€åä¸€è¡Œ
-	BYTE* pLineY = pY;//æŒ‡å‘ç¬¬ä¸€è¡Œ
+	BYTE* pLine = pRGB+w*(h-1)*3;//Ö¸ÏòRGBÍ¼ÏñµÄµÚÒ»ĞĞ£¬¼´´æ´¢¿Õ¼ä×îºóÒ»ĞĞ
+	BYTE* pLineY = pY;//Ö¸ÏòµÚÒ»ĞĞ
 	BYTE* pLineU = pU;
 	BYTE* pLineV = pV;
 	int r, g, b;
@@ -523,7 +523,7 @@ void CVFWCAPTUREDlg::YUVtoRGB(
 	for(int j=0;j<h;j++)
 	{
 		//Y
-		for(int i=0;i<w;i++)//ä¸€è¡Œå¤„ç†
+		for(int i=0;i<w;i++)//Ò»ĞĞ´¦Àí
 		{
 		y=(int) pLineY[i];
 		u=(int) pLineU[i/2];
@@ -541,21 +541,21 @@ void CVFWCAPTUREDlg::YUVtoRGB(
 		 pLine[3*i+1] =(unsigned  char ) g;
          pLine[3*i+2] =(unsigned  char ) r;
 		 }
-		pLineY += w;//ä¸‹ç§»ä¸€è¡Œ
+		pLineY += w;//ÏÂÒÆÒ»ĞĞ
 		pLineU += w/2;
 		pLineV += w/2;
-		pLine -= w*3;//ä¸Šç§»ä¸€è¡Œ
+		pLine -= w*3;//ÉÏÒÆÒ»ĞĞ
 	}
 }
 
-//å°†YUV422å¹³é¢å›¾ç‰‡æ ¼å¼(æŒ‰Y-U-Vå­˜æ”¾)è½¬æ¢ä¸ºRGBè§†é¢‘æ•°æ®æ ¼å¼ï¼ˆæŒ‰è±¡ç´ RGBRGB...ï¼‰
+//½«YUV422Æ½ÃæÍ¼Æ¬¸ñÊ½(°´Y-U-V´æ·Å)×ª»»ÎªRGBÊÓÆµÊı¾İ¸ñÊ½£¨°´ÏóËØRGBRGB...£©
 void CVFWCAPTUREDlg::RGBtoYUV(
-	    int w, int h,//å›¾åƒå¤§å°
-		BYTE *pRGB, //YUV422è§†é¢‘å›¾åƒæŒ‡é’ˆ
-		BYTE *pY, BYTE *pU, BYTE *pV//YUV422å¹³é¢å›¾ç‰‡æŒ‡é’ˆ
+	    int w, int h,//Í¼Ïñ´óĞ¡
+		BYTE *pRGB, //YUV422ÊÓÆµÍ¼ÏñÖ¸Õë
+		BYTE *pY, BYTE *pU, BYTE *pV//YUV422Æ½ÃæÍ¼Æ¬Ö¸Õë
 		)
 {
-	BYTE* pLine = pRGB+w*(h-1)*3;//æŒ‡å‘RGBå›¾åƒçš„ç¬¬ä¸€è¡Œï¼Œå³å­˜å‚¨ç©ºé—´æœ€åä¸€è¡Œ
+	BYTE* pLine = pRGB+w*(h-1)*3;//Ö¸ÏòRGBÍ¼ÏñµÄµÚÒ»ĞĞ£¬¼´´æ´¢¿Õ¼ä×îºóÒ»ĞĞ
 	BYTE* pLineY = pY;
 	BYTE* pLineU = pU;
 	BYTE* pLineV = pV;
@@ -564,7 +564,7 @@ void CVFWCAPTUREDlg::RGBtoYUV(
 	for(int j=0;j<h;j++)
 	{
 		//Y
-		for(int i=0;i<w;i++)//ä¸€è¡Œå¤„ç†
+		for(int i=0;i<w;i++)//Ò»ĞĞ´¦Àí
 		{
 		 b=(int)pLine[3*i] ;
 		 g=(int)pLine[3*i+1] ;
@@ -582,10 +582,10 @@ void CVFWCAPTUREDlg::RGBtoYUV(
 		 }
 		}
 
-		pLineY += w;//ä¸‹ç§»ä¸€è¡Œ
+		pLineY += w;//ÏÂÒÆÒ»ĞĞ
 		pLineU += w/2;
 		pLineV += w/2;
-		pLine -= w*3;//ä¸Šç§»ä¸€è¡Œ
+		pLine -= w*3;//ÉÏÒÆÒ»ĞĞ
 	}
 
 }

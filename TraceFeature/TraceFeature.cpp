@@ -60,13 +60,13 @@ CTraceFeatureApp::CTraceFeatureApp()
 CTraceFeatureApp theApp;
 #define ByteToVectorDouble(a) ((int)(a))/255.0
 #define WordToVectorDouble(a) ((int)(a))/65535.0
-#define MAX_RH	256			//æœ€å¤§ç‰¹å¾åŒ¹é…æœç´¢èŒƒå›´çš„é«˜åº¦
-aBYTE* pBuffer;//256*4*8=8196å­—èŠ‚çš„ç¼“å†²åŒºå¤‡ç”¨
-//pLineSumCå’ŒpLineSumDæ˜¯ä¸ºäº†å¿«é€Ÿæœç´¢ä¸€ä¸ªé‚»åŸŸè€Œè®¾ç½®çš„ï¼Œå…·ä½“è¯·çœ‹InitFromImageColså‡½æ•°çš„è¯´æ˜Ž
+#define MAX_RH	256			//×î´óÌØÕ÷Æ¥ÅäËÑË÷·¶Î§µÄ¸ß¶È
+aBYTE* pBuffer;//256*4*8=8196×Ö½ÚµÄ»º³åÇø±¸ÓÃ
+//pLineSumCºÍpLineSumDÊÇÎªÁË¿ìËÙËÑË÷Ò»¸öÁÚÓò¶øÉèÖÃµÄ£¬¾ßÌåÇë¿´InitFromImageColsº¯ÊýµÄËµÃ÷
 aPOINT* pLineSumC[2]={NULL,NULL};
 aPOINT* pLineSumD[2][2]={{NULL,NULL},{NULL,NULL}};
 /*******************************************************************/
-//åˆå§‹åŒ–å…¨å±€æŒ‡é’ˆå˜é‡ pLineSumCã€pLineSumD
+//³õÊ¼»¯È«¾ÖÖ¸Õë±äÁ¿ pLineSumC¡¢pLineSumD
 /*******************************************************************/
 DLL_EXP void InitFeatureBuffer(BUF_STRUCT* pBS)
 {
@@ -77,17 +77,17 @@ DLL_EXP void InitFeatureBuffer(BUF_STRUCT* pBS)
 	pLineSumD[0][1] = pLineSumD[0][0]+MAX_RH;
 	pLineSumD[1][0] = pLineSumD[0][1]+MAX_RH;
 	pLineSumD[1][1] = pLineSumD[1][0]+MAX_RH;
-	//ä»¥ä¸Šå æ®MAX_RH*6*8å­—èŠ‚=12K bytes,å‰©ä½™4K bytes
+	//ÒÔÉÏÕ¼¾ÝMAX_RH*6*8×Ö½Ú=12K bytes,Ê£Óà4K bytes
 	pBuffer = (aBYTE*)(pLineSumD[1][1]+MAX_RH);
 }
 /*******************************************************************/
-//åˆå§‹åŒ–è·Ÿè¸ªä½“çš„ç‰¹å¾ï¼Œå‚æ•°ä¸ºè·Ÿè¸ªä½“ç»“æž„å˜é‡
+//³õÊ¼»¯¸ú×ÙÌåµÄÌØÕ÷£¬²ÎÊýÎª¸ú×ÙÌå½á¹¹±äÁ¿
 /*******************************************************************/
 DLL_EXP void InitFeatureVector( FeatureVector* pThis)
 {
 	int i;
 	ASSERT(pThis);
-    //ç‰¹å¾å‘é‡ä»¥FeatureVector4På½¢å¼å­˜æ”¾
+    //ÌØÕ÷ÏòÁ¿ÒÔFeatureVector4PÐÎÊ½´æ·Å
 	FeatureVector4P* pVector = (FeatureVector4P*)pThis->Vector;
 	pVector->pNL_LeftTop		= (FeatureVector4P*)((aBYTE*)pVector+sizeof(FeatureVector4P));
 	pVector->pNL_RightTop		= (FeatureVector4P*)((aBYTE*)pVector+2*sizeof(FeatureVector4P));
@@ -101,8 +101,8 @@ DLL_EXP void InitFeatureVector( FeatureVector* pThis)
 	pVector->pNL_RightBottom->nLevels = 1;
     for(i=0;i<4;i++)
     	{
-        pVector->Vector[i].x = pVector->Vector[i].y = 0;//å››è§’é‡å¿ƒ
-        //å­åŒºåŸŸçš„å››è§’é‡å¿ƒ
+        pVector->Vector[i].x = pVector->Vector[i].y = 0;//ËÄ½ÇÖØÐÄ
+        //×ÓÇøÓòµÄËÄ½ÇÖØÐÄ
         pVector->pNL_LeftTop->Vector[i].x = pVector->pNL_LeftTop->Vector[i].y = 0;
         pVector->pNL_RightTop->Vector[i].x = pVector->pNL_RightTop->Vector[i].y = 0;
         pVector->pNL_LeftBottom->Vector[i].x = pVector->pNL_LeftBottom->Vector[i].y = 0;
