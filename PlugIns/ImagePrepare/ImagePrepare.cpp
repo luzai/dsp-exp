@@ -200,7 +200,7 @@ DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits
 
 	if (bLastPlugin)
 	{
-		// todo blastplugin? copytorect?
+		// todo blastplugin? copytorect stdafx
 		CopyToRect(BUF->clrBmp_1d8, //源图片指针
 				   pYBits,			//目标图片指针,用displayimage会报错
 				   320, 120,		//区域图片大小

@@ -243,6 +243,34 @@ int RegionLabel(aBYTE *tempImg, int width, int height)
 	return 0;
 }
 
+aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst)
+{
+	int minx = w, maxx = h, miny = 0, maxy = 0;
+	for (int j = 0; j < h; j++)
+	{
+		for (int i = 0; i < w; i++)
+		{
+			if (src[j * w + i] == value)
+			{
+				if (dst != null)
+					dst[j * w + i] = 255;
+				if (i < minx)
+					minx = i;
+				if (i > maxx)
+					maxx = i;
+				if (j < miny)
+					miny = j;
+				if (j > maxy)
+					maxy = j;
+			}
+			else if (dst != null)
+				dst[j * w + i] = 0;
+		}
+	}
+	aRect res = {minx,miny,maxx-minx,maxy-miny}; 
+	return res 
+}
+
 DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits, BYTE *pBuffer)
 {
 	//pYBits 大小为w*h
@@ -257,7 +285,7 @@ DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits
 	int pixelnum[256] = {0};
 	int minx, miny, maxx, maxy;
 
-	_BUF_STRUCT *BUF = (BUF_STRUCT *)pBuffer;
+	BUF_STRUCT *BUF = (BUF_STRUCT *)pBuffer;
 	aBYTE *tempImg = myHeapAlloc(w * h / 16);
 
 	BYTE *pU = BUF->clrBmp_1d8 + w * h / 8;
@@ -289,37 +317,14 @@ DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits
 	for (i = 2; i < 256; i++)
 		if (pixelnum[i] > pixelnum[max])
 			max = i;
+		
+	aRect res = get_bbox(tempImg, w/4,h/4, max, tempImg) ; 
 
-	minx = w / 4;
-	miny = h / 4;
-	maxx = maxy = 0;
-
-	for (j = 0; j < h / 4; j++)
-	{
-		for (i = 0; i < w / 4; i++)
-		{
-			if (tempImg[j * w / 4 + i] == max)
-			{
-				tempImg[j * w / 4 + i] = 255;
-				if (i < minx)
-					minx = i;
-				if (i > maxx)
-					maxx = i;
-				if (j < miny)
-					miny = j;
-				if (j > maxy)
-					maxy = j; //第一次写错了导致画方框不准确
-			}
-			else
-				tempImg[j * w / 4 + i] = 0;
-		}
-	}
-
-	BUF->rcnFace.height = maxy - miny;
-	BUF->rcnFace.left = 2 * minx;
-	BUF->rcnFace.top = miny;
-	BUF->rcnFace.width = 2 * (maxx - minx);
-	BUF->nFacePixelNum = max;
+	BUF->rcnFace.height = res.height;
+	BUF->rcnFace.left = 2 * res.left;
+	BUF->rcnFace.top = res.top;
+	BUF->rcnFace.width = 2 * res.width;
+	BUF->nFacePixelNum = max; 
 
 	for (i = 0; i < w * h / 8; i++)
 		BUF->clrBmp_1d8[i] = tempImg[i / 2];
@@ -331,7 +336,7 @@ DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits
 	DrawRectangle(
 		pYBits, w, h,
 		rcn,
-		(59, 15, 10),
+		(59, 15, 10), // todo 0x591510
 		false);
 
 	CopyToRect(BUF->clrBmp_1d8, //源图片指针

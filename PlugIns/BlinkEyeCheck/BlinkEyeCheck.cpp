@@ -122,7 +122,7 @@ DLL_EXP int ON_PLUGINCTRL(int nMode, void *pParameter)
 	return nRet;
 }
 
-DDL_EXP void Erosion(aBYTE *tempImg, int width, int height, int N1, int N2)
+void Erosion(aBYTE *tempImg, int width, int height, int N1, int N2)
 {
 	int i, j, k, flag;
 	//分配一个临时变量
@@ -168,7 +168,7 @@ DDL_EXP void Erosion(aBYTE *tempImg, int width, int height, int N1, int N2)
 	myHeapFree(tempImg1);
 }
 
-DLL_EXP void Dilation(aBYTE *tempImg, int width, int height, int N1, int N2)
+void Dilation(aBYTE *tempImg, int width, int height, int N1, int N2)
 {
 	int i, j, k, flag;
 	aBYTE *tempImg2 = myHeapAlloc(width * height * sizeof(aBYTE));
@@ -211,7 +211,7 @@ DLL_EXP void Dilation(aBYTE *tempImg, int width, int height, int N1, int N2)
 	myHeapFree(tempImg2);
 }
 
-DLL_EXP int RegionLabel(aBYTE *tempImg, int width, int height)
+int RegionLabel(aBYTE *tempImg, int width, int height)
 {
 	int i, classnum, L = 0;
 	int Lmax, Lmin;
@@ -278,13 +278,15 @@ DLL_EXP int RegionLabel(aBYTE *tempImg, int width, int height)
 	return 0;
 }
 
-DLL_EXP void gs_filter(aBYTE *gray, int width, int height);
-DLL_EXP aBYTE conv(aBYTE *img, double *mask, int row, int col, int w, int h);
-DLL_EXP aBYTE get_px_value(aBYTE *img, int row, int col, int width, int height);
-DLL_EXP void copy_img(aBYTE *src_img, aBYTE *dst_img, int w, int h);
-DLL_EXP void diff_img(BUF_STRUCT *pBS, aBYTE *last_img, aBYTE *this_img);
-DLL_EXP void thresh_img(BUF_STRUCT *pBS);
-DLL_EXP void proc_img(BUF_STRUCT *pBS);
+void gs_filter(aBYTE *gray, int width, int height);
+aBYTE conv(aBYTE *img, double *mask, int row, int col, int w, int h);
+aBYTE get_px_value(aBYTE *img, int row, int col, int width, int height);
+void copy_img(aBYTE *src_img, aBYTE *dst_img, int w, int h);
+void diff_img(BUF_STRUCT *pBS, aBYTE *last_img, aBYTE *this_img);
+void thresh_img(BUF_STRUCT *pBS);
+void proc_img(BUF_STRUCT *pBS);
+aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst);
+
 
 /*******************************************************************/
 //眨眼检测与眼睛定位插件
@@ -326,19 +328,17 @@ DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits
 }
 /*******************************************************************/
 
-void get_bbox(aBYTE *tempImg, int w, int h, int k, int *bbox)
+aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst)
 {
-	int i, j;
-	int minx = 0, miny = 0;
-	int maxx, maxy;
-	maxx = w;
-	maxy = h;
-	for (j = 0; j < h; j++)
+	int minx = w, maxx = h, miny = 0, maxy = 0;
+	for (int j = 0; j < h; j++)
 	{
-		for (i = 0; i < w; i++)
+		for (int i = 0; i < w; i++)
 		{
-			if (tempImg[j * w + i] == k)
+			if (src[j * w + i] == value)
 			{
+				if (dst != null)
+					dst[j * w + i] = 255;
 				if (i < minx)
 					minx = i;
 				if (i > maxx)
@@ -346,14 +346,14 @@ void get_bbox(aBYTE *tempImg, int w, int h, int k, int *bbox)
 				if (j < miny)
 					miny = j;
 				if (j > maxy)
-					maxy = j; //第一次写错了导致画方框不准确
+					maxy = j;
 			}
+			else if (dst != null)
+				dst[j * w + i] = 0;
 		}
 	}
-	bbox[0] = minx;
-	bbox[1] = maxx;
-	bbox[2] = miny;
-	bbox[3] = maxy;
+	aRect res = {minx,miny,maxx-minx,maxy-miny}; 
+	return res 
 }
 
 void proc_img(BUF_STRUCT *pBS)
