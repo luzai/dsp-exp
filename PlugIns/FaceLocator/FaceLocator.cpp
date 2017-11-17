@@ -336,7 +336,7 @@ DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits
 	DrawRectangle(
 		pYBits, w, h,
 		rcn,
-		(59, 15, 10), // todo 0x591510
+		TYUV(59, 15, 10), // todo 0x591510
 		false);
 
 	CopyToRect(BUF->clrBmp_1d8, //ԴͼƬָ��

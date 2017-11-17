@@ -64,6 +64,74 @@ CImageProcApp::CImageProcApp()
 CImageProcApp theApp;
 
 
+
+DLL_EXP void vector_init(vector *v)
+{
+    v->data = NULL;
+    v->size = 0;
+    v->count = 0;
+}
+
+DLL_EXP int vector_count(vector *v)
+{
+    return v->count;
+}
+
+DLL_EXP void vector_add(vector *v, void *e)
+{
+    if (v->size == 0) {
+        v->size = 10;
+        v->data = malloc(sizeof(void*) * v->size);
+        memset(v->data, '\0', sizeof(void*) * v->size);
+    }
+
+    if (v->size == v->count) {
+        v->size *= 2;
+        v->data = realloc(v->data, sizeof(void*) * v->size);
+    }
+
+    v->data[v->count] = e;
+    v->count++;
+}
+
+DLL_EXP void vector_set(vector *v, int index, void *e)
+{
+    if (index >= v->count) {
+        return;
+    }
+
+    v->data[index] = e;
+}
+
+DLL_EXP void *vector_get(vector *v, int index)
+{
+    if (index >= v->count) {
+        return NULL;
+    }
+
+    return v->data[index];
+}
+
+DLL_EXP void vector_delete(vector *v, int index)
+{
+    if (index >= v->count) {
+        return;
+    }
+
+    for (int i = index, j = index; i < v->count; i++) {
+        v->data[j] = v->data[i];
+        j++;
+    }
+
+    v->count--;
+}
+
+DLL_EXP void vector_free(vector *v)
+{
+    free(v->data);
+}
+
+
 //定义一个结构，用于双线性内插法重采样
 struct LookupCell{
     UINT x;
@@ -74,7 +142,7 @@ struct LookupCell{
 };
 //定义一个全局变量
 BUF_STRUCT * pBS = NULL;
-//
+
 void (*AddMessageToList)(char * message)=NULL;
 
 DLL_EXP void InitMessageOpFunction(void (*AMTL)(char *))

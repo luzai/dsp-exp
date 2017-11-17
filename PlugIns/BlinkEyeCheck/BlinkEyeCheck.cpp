@@ -278,56 +278,6 @@ int RegionLabel(aBYTE *tempImg, int width, int height)
 	return 0;
 }
 
-void gs_filter(aBYTE *gray, int width, int height);
-aBYTE conv(aBYTE *img, double *mask, int row, int col, int w, int h);
-aBYTE get_px_value(aBYTE *img, int row, int col, int width, int height);
-void copy_img(aBYTE *src_img, aBYTE *dst_img, int w, int h);
-void diff_img(BUF_STRUCT *pBS, aBYTE *last_img, aBYTE *this_img);
-void thresh_img(BUF_STRUCT *pBS);
-void proc_img(BUF_STRUCT *pBS);
-aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst);
-
-
-/*******************************************************************/
-//眨眼检测与眼睛定位插件
-/*******************************************************************/
-DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits, BYTE *pBuffer)
-{
-	//pYBits 大小为w*h
-	//pUBits 和 pVBits 的大小为 w*h/2
-	//pBuffer 的大小为 w*h*4
-	//下面算法都基于一个假设， 即w是16的倍数
-	AFX_MANAGE_STATE(AfxGetStaticModuleState()); //模块状态切换
-												 //请编写相应处理程序
-	BUF_STRUCT *pBS = (BUF_STRUCT *)pBuffer;
-
-	// 进行高斯滤波
-	gs_filter(pBS->grayBmp_1d16, width / 4, height / 4);
-
-	// 将图像存入历史图像
-	const int N = 3;
-	if (pBS->nImageQueueIndex == -1)
-	{
-		for (int i = 0; i < 8; i++)
-			copy_img(pBS->grayBmp_1d16, pBS->pImageQueue[i]);
-	}
-	else
-	{
-		copy_img(pBS->grayBmp_1d16, pBS->pImageQueue[(pBS->nImageQueueIndex + 1) % 8]);
-		pBS->nImageQueueIndex++;
-		pBS->nImageQueueIndex = pBS->nImageQueueIndex % 8;
-		pBS->nLastImageIndex = (pBS->nImageQueueIndex - N) % 8;
-	}
-	diff_img(pBS,
-			 pBS->pImageQueue[pBS->nImageQueueIndex],
-			 pBS->pImageQueue[pBS->nLastImageIndex]);
-	bool blink = thresh_img(pBS);
-	if (blink)
-	{
-	}
-}
-/*******************************************************************/
-
 aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst)
 {
 	int minx = w, maxx = h, miny = 0, maxy = 0;
@@ -352,45 +302,30 @@ aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst)
 				dst[j * w + i] = 0;
 		}
 	}
-	aRect res = {minx,miny,maxx-minx,maxy-miny}; 
-	return res 
+	aRect res = {minx, miny, maxx - minx, maxy - miny};
+	return res
 }
 
-void proc_img(BUF_STRUCT *pBS)
+int vector_sum(vector v)
 {
-	int w = pBS->W;
-	int h = pBS->H;
-
-	aBYTE *tempImg = (aBYTE *)pBS->TempImage1d8;
-	Erosion(tempImg, w, h, 3, 1);
-	Dilation(tempImg, w, h, 3, 1);
-	RegionLabel(tempImg, w, h);
-	int max_k = 0 for (int i = 0; i < w * h; i++)
-		max_k = (tempImg[i] > max_k) tempImg[i] : max_k;
-	const int MAX_K = 256;
-	int size[256] = {0}, center_x[256] = {0}, center_y[256] = {0};
-	int bbox[4];
-	for (int k = 1; k <= max_k; k++)
+	int s = 0;
+	for (int i = 0; i < vector_count(&v); i++)
 	{
-		get_bbox(tempImg, w, h, k, bbox);
-		size[k] = (bbox[1] - bbox[0]) * (bbox[1] - bbox[0]) + ()
+		s += (int)vector_get(&v, i);
 	}
+	return s;
 }
 
-void thresh_img(BUF_STRUCT *pBS)
+bool thresh_img(aBYTE *img, int w, int h)
 {
-
-	int N0 = 50, N1 = 10;
-	int w = pBS->W;
-	int h = pBS->H;
-	int sum = W * h;
-
+	int N0 = 50, N1 = 10; // todo tuning
+	int sum = 0, thresh = 255;
 	int n[256] = {0};
-	for (int i = 0; i < sum; i++)
+
+	for (int i = 0; i < w * h; i++)
 	{
-		n[pBS->TempImage1d8[i]]++;
+		n[img[i]]++;
 	}
-	int thresh = 255, sum = 0;
 	for (; thresh > 0; thresh--)
 	{
 		sum += n[thresh];
@@ -400,29 +335,204 @@ void thresh_img(BUF_STRUCT *pBS)
 
 	for (int i = 0; i < sum; i++)
 	{
-		pBS->TempImage1d8[i] = (pBS->TempImage1d8[i] > thresh) ? 255 : 0
+		img[i] = (img[i] > thresh) ? 255 : 0
 	}
 
 	if (thresh > N1)
-		return 1;
+		return true;
 	else
-		return 0;
+		return false;
 }
 
-void diff_img(BUF_STRUCT *pBS, aBYTE *last_img, aBYTE *this_img)
+void diff_img(aBYTE *last_img, aBYTE *this_img, int w, int h, aBYTE *dst)
 {
-	int w = pBS->W;
-	int h = pBS->H;
-	int sum = W * h;
-
-	for (int i = 0; i < sum; i++)
+	for (int i = 0; i < w * h; i++)
 	{
 		if (last_img[i] < this_img[i])
-			pBS->TempImage1d8[i] = 0;
+			dst[i] = 0;
 		else
-			pBS->TempImage1d8[i] = last_img[i] - this_img[i];
+			dst[i] = last_img[i] - this_img[i]
 	}
 }
+
+void gs_filter(aBYTE *gray, int width, int height);
+aBYTE conv(aBYTE *img, double *mask, int row, int col, int w, int h);
+aBYTE get_px_value(aBYTE *img, int row, int col, int width, int height);
+void copy_img(aBYTE *src_img, aBYTE *dst_img, int w, int h);
+DLL_INP void ShowDebugMessage(char *format, ...);
+
+/*******************************************************************/
+//眨眼检测与眼睛定位插件
+/*******************************************************************/
+DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits, BYTE *pBuffer)
+{
+	//pYBits 大小为w*h
+	//pUBits 和 pVBits 的大小为 w*h/2
+	//pBuffer 的大小为 w*h*4
+	//下面算法都基于一个假设， 即w是16的倍数
+	AFX_MANAGE_STATE(AfxGetStaticModuleState()); //模块状态切换
+												 //请编写相应处理程序
+	BUF_STRUCT *pBS = (BUF_STRUCT *)pBuffer;
+
+	// 进行高斯滤波
+	gs_filter(pBS->grayBmp_1d16, w / 4, h / 4);
+
+	// 将图像存入历史图像
+	const int N = 3;
+	if (pBS->nImageQueueIndex == -1)
+	{
+		for (int i = 0; i < 8; i++)
+			copy_img(pBS->grayBmp_1d16, pBS->pImageQueue[i], w / 4, h / 4);
+	}
+	else
+	{
+		copy_img(pBS->grayBmp_1d16, pBS->pImageQueue[(pBS->nImageQueueIndex + 1) % 8], w / 4, h / 4);
+		pBS->nImageQueueIndex++;
+		pBS->nImageQueueIndex = pBS->nImageQueueIndex % 8;
+		pBS->nLastImageIndex = (pBS->nImageQueueIndex - N) % 8;
+	}
+	diff_img(pBS->pImageQueue[pBS->nImageQueueIndex],
+			 pBS->pImageQueue[pBS->nLastImageIndex],
+			 w / 4, h / 4,
+			 pBS->TempImage1d8);
+	bool blink = thresh_img(pBS->TempImage1d8, w / 4, h / 4);
+	if (blink == false)
+		return 0;
+
+	tempImg = pBS->TempImage1d8;
+
+	const int MAX_K = 256;
+	int w4 = w / 4;
+	h4 = h / 4;
+	float center_x[MAX_K] = {0}, center_y[MAX_K] = {0};
+	float size[MAX_K] = {0}, N[MAX_K] = {0};
+	vector region_x[MAX_K], region_y[MAX_K];
+
+	int max_k = 0;
+
+	for (int k = 0; k < MAX_K; k++)
+	{
+		vector_init(&region_x[k]);
+		vector_init(&region_y[k]);
+	}
+
+	Erosion(tempImg, w4, h4, 3, 1);
+	Dilation(tempImg, w4, h4, 3, 1);
+	RegionLabel(tempImg, w4, h4);
+	for (int i = 0; i < w4 * h4; i++)
+	{
+		max_k = (tempImg[i] > max_k) tempImg[i] : max_k;
+		N[tempImg[i]] += 1;
+	}
+
+	ASSERT(max_k <= MAX_K)
+
+	for (int y = 0; y <= h4; y++)
+	{
+		for (int x = 0; x <= w4; x++)
+		{
+			int k = tempImg[y4 * w4 + x];
+			vector_add(&region_x[k], x);
+			vector_add(&region_y[k], y);
+		}
+	}
+
+	for (int k = 1; k <= max_k; k++)
+	{
+		aRect bbox = get_bbox(tempImg, w4, h4, k, null);
+		size[k] = bbox.width * bbox.width + bbox.height * bbox.height;
+		center_x[k] = vector_sum(region_x[k]) / N[k];
+		center_y[k] = vector_sum(region_y[k]) / N[k];
+	}
+
+	find_eyes = false;
+	int i, j;
+	for (i = 0; i < max_k; i++)
+	{
+		for (j = i + 1; j < max_k; j++)
+		{
+			if (abs(center_y[i] - center_y[i]) < 4 &&
+				abs(center_x[i] - center_y[j]) > 15 &&
+				abs(center_x[i] - center_x[i] < 30) &&
+				size(i) < 200 &&
+				size(j) < 200)
+			{
+				find_eyes = true;
+			}
+		}
+	}
+	if (find_eyes == false)
+		return 0;
+	if (center_x[i] > center_y[j]) // i -- left, small -- left
+		swap(i, j);
+
+	aPoint pt_left_eye, pt_right_eye;
+
+	pt_left_eye.x = center_x[i];
+	pt_left_eye.y = center_y[i];
+	pt_right_eye.x = center_x[j];
+	pt_right_eye.y = center_y[j];
+
+	DrawCross(BUF->displayImage, w, h,
+			  pt_left_eye.x * 4,
+			  pt_left_eye.y * 4,
+			  5,
+			  TYUV(59, 15, 10),
+			  false);
+	DrawCross(BUF->displayImage, w, h,
+			  pt_right_eye.x * 4,
+			  pt_right_eye.y * 4,
+			  5,
+			  TYUV(59, 15, 10),
+			  false);
+
+	pt_left_eye.x *= 4;
+	pt_left_eye.y *= 4;
+	pt_right_eye.x *= 4;
+	pt_right_eye.y *= 4;
+	aPoint pt_nose;
+	pt_nose.x = (pt_left_eye.x + pt_right_eye.x) / 2;
+	pt_nose.y = pt_left_eye.y;
+	float n_eye_dist = abs(pt_left_eye.x - pt_right_eye.x);
+	float n_eye_width = 2 / 3 * n_eye_dist;
+	float n_eye_height = 1 / 2 * n_eye_dist;
+
+	aRect eye = get_bbox(tempImg, w4, h4, i, null);
+	if (eye.width * 4 > n_eye_width || eye.height * 4 > n_eye_height)
+		return 0;
+	aRect eye = get_bbox(tempImg, w4, h4, j, null);
+	if (eye.width * 4 > n_eye_width || eye.height * 4 > n_eye_height)
+		return 0;
+
+	if
+		!(BUF->bLastEyeChecked ||
+		  !BUF->pOtherVars->objLefteye->bBrokenTrace || !BUF->pOtherVars->objRighteye->bBrokenTrace || !BUF->pOtherVars->objNose->bBrokenTrace) return 0;
+
+	float n_nose_width = 3 / 4 * n_eye_dist;
+	float n_nose_height = n_eye_dist;
+
+	aRect rcv_left_eye = {int(pt_left_eye.x - n_eye_width / 2),
+						  int(pt_left_eye.y - n_eye_height / 2),
+						  int(n_eye_width / 4) * 4,
+						  int(n_eye_height / 4) * 4}
+
+	aRect rcv_right_eye = {int(pt_right_eye.x - n_eye_width / 2),
+						   int(pt_right_eye.y - n_eye_height / 2),
+						   int(n_eye_width / 4) * 4,
+						   int(n_eye_height / 4) * 4}
+
+	aRect rcv_nose = { int(pt_nose.x - n_nose_width / 2),
+					   int(pt_nose.y - n_nose_height / 2),
+					   int(n_nose_width / 4) * 4,
+					   int(n_nose_height / 4) * 4  }  
+	BUF->pOtherVars->objLefteye->rcObject=rcv_left_eye; 
+	BUF->pOtherVars->objRighteye->rcObject=rcv_right_eye; 
+	BUF->pOtherVars->objNose->rcObject=rcv_nose;  
+
+	
+
+}
+/*******************************************************************/
 
 void copy_img(aBYTE *src_img, aBYTE *dst_img, int w, int h)
 {
@@ -468,8 +578,7 @@ aBYTE conv(aBYTE *img, double *mask, int row, int col, int w, int h)
 
 aBYTE get_px_value(aBYTE *img, int row, int col, int width, int height)
 {
-	if (row >= width || col >= height)
-		exit(1);
+	ASSERT(row < width && col < height)
 	return img[row * width + col];
 }
 
