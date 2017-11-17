@@ -93,6 +93,19 @@ DLL_EXP int ON_PLUGINCTRL(int nMode, void *pParameter)
 
 // extern "C" _declspec(ddlimport) void myHeapAllocInit(BUF_STRUCT *pBufStruct);
 DLL_INP void myHeapAllocInit(BUF_STRUCT *pBufStruct);
+DLL_INP DLL_EXP bool ReSample(aBYTE *ThisImage, int Width, int Height, //源图片指针及大小
+							  int newWidth, int newHeight,			   //目标图片大小
+							  bool InsMode,							   //true：双线性内插法，false：邻近点采样法
+							  bool bGray,							   //true：灰度图片采样，false：彩色图片采样
+							  aBYTE *result							   //目标图片指针
+							  );
+
+void copy_img(aBYTE *src_img, aBYTE *dst_img, int w, int h)
+{
+	int sum = w * h;
+	for (int i = 0; i < sum; i++)
+		dst_img[i] = src_img[i];
+}
 
 void InitTraceObject(TRACE_OBJECT *obj, char *mode)
 {
@@ -173,71 +186,17 @@ DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits
 	}
 
 	BUF->displayImage = pYBits;
-	// todo use ReSample
+
 	BYTE *p = BUF->colorBmp;
-	BYTE *pY = pYBits;
-	BYTE *pU = pUBits;
-	BYTE *pV = pVBits;
-	for (j = 0; j < h; j++)
-	{
-		for (i = 0; i < w; i++)
-			p[i] = pY[i];
-		pY += w;
-		p += w;
-	}
+	copy_img(pYBits, p, w, h);
+	p += w * h;
+	copy_img(pUBits, p, w, h / 2);
+	p += w * h / 2;
+	copy_img(pVBits, p, w, h / 2);
 
-	for (j = 0; j < h; j++)
-	{
-		for (i = 0; i < w / 2; i++)
-			p[i] = pU[i];
-		pU += w / 2;
-		p += w / 2;
-	}
-	for (j = 0; j < h; j++)
-	{
-		for (i = 0; i < w / 2; i++)
-			p[i] = pV[i];
-		pV += w / 2;
-		p += w / 2;
-	}
+	ReSample(BUF->colorBmp, w, h, w / 2, h / 4, true, false, BUF->clrBmp_1d8);
 
-	BYTE *pd8 = BUF->clrBmp_1d8;
-	pY = pYBits;
-	pU = pUBits;
-	pV = pVBits;
-	for (j = 0; j < h / 4; j++)
-	{
-		for (i = 0; i < w / 2; i++)
-			pd8[i] = pY[2 * i];
-		pY += 4 * w;
-		pd8 += w / 2;
-	}
-
-	for (j = 0; j < h / 4; j++)
-	{
-		for (i = 0; i < w / 4; i++)
-			pd8[i] = pU[2 * i];
-		pU += 2 * w;
-		pd8 += w / 4;
-	}
-
-	for (j = 0; j < h / 4; j++)
-	{
-		for (i = 0; i < w / 4; i++)
-			pd8[i] = pV[2 * i];
-		pV += 2 * w;
-		pd8 += w / 4;
-	}
-	// 十六分之一采样
-	BYTE *pd16 = BUF->grayBmp_1d16;
-	pY = pYBits;
-	for (j = 0; j < h / 4; j++)
-	{
-		for (i = 0; i < w / 4; i++)
-			pd16[i] = pY[i * 4];
-		pY += 4 * w;
-		pd16 += w / 4;
-	}
+	ReSample(BUF->grayBmp, w, h, w / 4, h / 4, true, true, BUF->grayBmp_1d16);
 
 	if (bLastPlugin)
 	{
