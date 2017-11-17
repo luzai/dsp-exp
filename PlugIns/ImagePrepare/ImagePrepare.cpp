@@ -41,10 +41,10 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CImagePrepareApp
 BEGIN_MESSAGE_MAP(CImagePrepareApp, CWinApp)
-	//{{AFX_MSG_MAP(CImagePrepareApp)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CImagePrepareApp)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//    DO NOT EDIT what you see in these blocks of generated code!
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -63,25 +63,25 @@ bool bLastPlugin = false;
 
 DLL_EXP void ON_PLUGIN_BELAST(bool bLast)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//模块状态切换
+	AFX_MANAGE_STATE(AfxGetStaticModuleState()); //模块状态切换
 	bLastPlugin = bLast;
 }
 //插件名称
 DLL_EXP LPCTSTR ON_PLUGININFO(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//模块状态切换
+	AFX_MANAGE_STATE(AfxGetStaticModuleState()); //模块状态切换
 	return sInfo;
 }
 //
 DLL_EXP void ON_INITPLUGIN(LPVOID lpParameter)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//模块状态切换
-	//theApp.dlg.Create(IDD_PLUGIN_SETUP);
-	//theApp.dlg.ShowWindow(SW_HIDE);
+	AFX_MANAGE_STATE(AfxGetStaticModuleState()); //模块状态切换
+												 //theApp.dlg.Create(IDD_PLUGIN_SETUP);
+												 //theApp.dlg.ShowWindow(SW_HIDE);
 }
-DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
+DLL_EXP int ON_PLUGINCTRL(int nMode, void *pParameter)
 {
-//模块状态切换
+	//模块状态切换
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	int nRet = 0;
 	return nRet;
@@ -91,28 +91,51 @@ DLL_EXP int ON_PLUGINCTRL(int nMode,void* pParameter)
 /*                             摄像头视频流图片截取、重采样等处理                       */
 /****************************************************************************************/
 
-DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYTE* pBuffer)
-{
-//pYBits 大小为w*h
-//pUBits 和 pVBits 的大小为 w*h/2
-//pBuffer 的大小为 w*h*6
-//下面算法都基于一个假设，即w是16的倍数
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//模块状态切换
+// extern "C" _declspec(ddlimport) void myHeapAllocInit(BUF_STRUCT *pBufStruct);
+DLL_INP void myHeapAllocInit(BUF_STRUCT *pBufStruct);
 
-	int i,j;
-	BUF_STRUCT* BUF = (BUF_STRUCT*) pBuffer
-	BUF->displayImage = pYBits; 
-	if(BUF->bNotInited){
-		BUF->colorBmp=pBuffer+sizeof(BUF_STRUCT);
-		BUF->grayBmp=BUF->colorBmp;
-		BUF->clrBmp_1d8=BUF->grayBmp+w*h*2;
-		BUF->grayBmp_1d16=BUF->clrBmp_1d8+w*h/4;
-		BUF->TempImage1d8=BUF->grayBmp_1d16+w*h/16;
-		BUF->lastImageQueue1d16m8=BUF->TempImage1d8+w*h/8;
-		BUF->pOtherVars=(OTHER_VARS*)(BUF->lastImageQueue1d16m8+w*h*2); 
-		BUF->pOtherData = (aBYTE*)BUF->pOtherVars + sizeof(OTHER_VARS);//
-		for(i=0;i<=7;i++) BUF->pImageQueue[i] = BUF->lastImageQueue1d16m8 + i*(w*h/16);
-		
+void InitTraceObject(TRACE_OBJECT *obj, char *mode)
+{
+	obj->rcObject = {0, 0, 0, 0};
+	obj->fvObject->size = sizeof(FeatureVector4P) * 5;
+	// todo
+	for (int i = 0; i < 4; i++)
+		obj->fvObject->Vector[i] = (0, 0);
+	obj->fvObject_org->size = sizeof(FeatureVector4P) * 5;
+	for (int i = 0; i < 4; i++)
+		obj->fvObject_org->Vector[i] = (0, 0);
+	obj->spdxObj = obj->spdyObj = 0;
+	obj->nMinDist = 0x7fffffff;
+	obj->bBrokenTrace = false;
+	obj->bSaveit = false;
+	obj->nBrokenTimes = 0;
+	obj->sName = "lz-tr";
+}
+
+DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits, BYTE *pBuffer)
+{
+	//pYBits 大小为w*h
+	//pUBits 和 pVBits 的大小为 w*h/2
+	//pBuffer 的大小为 w*h*6
+	//下面算法都基于一个假设，即w是16的倍数
+	AFX_MANAGE_STATE(AfxGetStaticModuleState()); //模块状态切换
+
+	int i, j;
+	BUF_STRUCT *BUF = (BUF_STRUCT *)pBuffer;
+
+	if (BUF->bNotInited)
+	{
+		BUF->colorBmp = pBuffer + sizeof(BUF_STRUCT);
+		BUF->grayBmp = BUF->colorBmp;
+		BUF->clrBmp_1d8 = BUF->grayBmp + w * h * 2;
+		BUF->grayBmp_1d16 = BUF->clrBmp_1d8 + w * h / 4;
+		BUF->TempImage1d8 = BUF->grayBmp_1d16 + w * h / 16;
+		BUF->lastImageQueue1d16m8 = BUF->TempImage1d8 + w * h / 8;
+		BUF->pOtherVars = (OTHER_VARS *)(BUF->lastImageQueue1d16m8 + w * h * 2);
+		BUF->pOtherData = (aBYTE *)BUF->pOtherVars + sizeof(OTHER_VARS);
+		for (i = 0; i <= 7; i++)
+			BUF->pImageQueue[i] = BUF->lastImageQueue1d16m8 + i * (w * h / 16);
+
 		BUF->W = w;
 		BUF->H = h;
 		BUF->cur_allocSize = 0;
@@ -123,113 +146,120 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 		BUF->EyePosConfirm = true;
 		BUF->nImageQueueIndex = -1;
 		BUF->nLastImageIndex = -1;
-		for(i = 0; i<=255; i++)
+		for (i = 0; i <= 255; i++)
 		{
-			if(i>=85 && i<=126)
-			BUF->pOtherVars->byHistMap_U[i] = 1;
-			else BUF->pOtherVars->byHistMap_U[i] = 0;
+			if (i >= 85 && i <= 126)
+				BUF->pOtherVars->byHistMap_U[i] = 1;
+			else
+				BUF->pOtherVars->byHistMap_U[i] = 0;
 		}
-		for(i=0;i<=255;i++){
-			if(i>=130&&i<165)
-			BUF->pOtherVars->byHistMap_V[i]=1;
-			else BUF->pOtherVars->byHistMap_V[i]=0; 
+		for (i = 0; i <= 255; i++)
+		{
+			if (i >= 130 && i < 165)
+				BUF->pOtherVars->byHistMap_V[i] = 1;
+			else
+				BUF->pOtherVars->byHistMap_V[i] = 0;
 		}
-	
-		InitTraceObject(&BUF->pOtherVars->objNose,"nosetrac");
-		InitTraceObject(&BUF->pOtherVars->objLefteye,"Leyetrac");
-		InitTraceObject(&BUF->pOtherVars->objRighteye,"Reyetrac");
-	
-		BUF->max_allocSize = w*h*17/16-sizeof(BUF_STRUCT)-sizeof(OTHER_VARS);
+
+		InitTraceObject(&BUF->pOtherVars->objNose, "nosetrac");
+		InitTraceObject(&BUF->pOtherVars->objLefteye, "Leyetrac");
+		InitTraceObject(&BUF->pOtherVars->objRighteye, "Reyetrac");
+
+		// 根据需求初始化跟踪体特征全局向量FeaProcBuf todo
+
+		BUF->max_allocSize = w * h * 17 / 16 - sizeof(BUF_STRUCT) - sizeof(OTHER_VARS);
 		myHeapAllocInit(BUF);
 		BUF->bNotInited = false;
-		
-	}
-	BYTE *p=BUF->colorBmp;
-	BYTE *pY=pYBits;
-	BYTE *pU=pUBits;
-	BYTE *pV=pVBits;
-	for(j=0;j<h;j++)
-	{
-		for(i=0;i<w;i++)
-		p[i]=pY[i];
-		pY+=w;
-		p+=w;
 	}
 
-	for(j=0;j<h;j++)
+	BUF->displayImage = pYBits;
+	// todo use ReSample
+	BYTE *p = BUF->colorBmp;
+	BYTE *pY = pYBits;
+	BYTE *pU = pUBits;
+	BYTE *pV = pVBits;
+	for (j = 0; j < h; j++)
 	{
-	for(i=0;i<w/2;i++)
-	p[i]=pU[i];
-	pU+=w/2;
-	p+=w/2;
-	}
-	for(j=0;j<h;j++)
-	{
-	for(i=0;i<w/2;i++)
-	p[i]=pV[i];
-	pV+=w/2;
-	p+=w/2;
+		for (i = 0; i < w; i++)
+			p[i] = pY[i];
+		pY += w;
+		p += w;
 	}
 
-	BYTE *pd8=BUF->clrBmp_1d8;
-	pY=pYBits;
-	pU=pUBits;
-	pV=pVBits;
-	for(j=0;j<h/4;j++)
+	for (j = 0; j < h; j++)
 	{
-	for(i=0;i<w/2;i++)
-	pd8[i]=pY[2*i];
-	pY+=4*w;
-	pd8+=w/2;
+		for (i = 0; i < w / 2; i++)
+			p[i] = pU[i];
+		pU += w / 2;
+		p += w / 2;
+	}
+	for (j = 0; j < h; j++)
+	{
+		for (i = 0; i < w / 2; i++)
+			p[i] = pV[i];
+		pV += w / 2;
+		p += w / 2;
 	}
 
-	for(j=0;j<h/4;j++){
-		for(i=0;i<w/4;i++)
-			pd8[i]=pU[2*i];
-		pU+=2*w;
-		pd8+=w/4;
+	BYTE *pd8 = BUF->clrBmp_1d8;
+	pY = pYBits;
+	pU = pUBits;
+	pV = pVBits;
+	for (j = 0; j < h / 4; j++)
+	{
+		for (i = 0; i < w / 2; i++)
+			pd8[i] = pY[2 * i];
+		pY += 4 * w;
+		pd8 += w / 2;
 	}
 
-	for(j=0;j<h/4;j++)
+	for (j = 0; j < h / 4; j++)
 	{
-	for(i=0;i<w/4;i++)
-	pd8[i]=pV[2*i];
-	pV+=2*w;
-	pd8+=w/4;
-	}
-	/ /十六分之一采样
-	BYTE *pd16=BUF->grayBmp_1d16;
-	pY=pYBits;
-	for(j=0;j<h/4;j++)
-	{
-	for(i=0;i<w/4;i++)
-	pd16[i]=pY[i*4];
-	pY+=4*w;
-	pd16+=w/4;
+		for (i = 0; i < w / 4; i++)
+			pd8[i] = pU[2 * i];
+		pU += 2 * w;
+		pd8 += w / 4;
 	}
 
-	if(bLastPlugin)
+	for (j = 0; j < h / 4; j++)
 	{
-	CopyToRect(BUF->clrBmp_1d8,//源图片指针
-	pYBits,//目标图片指针,用displayimage会报错
-	3 20,120,//区域图片大小
-	6 40,480,//目标图片大小
-	1 ,1,//区域位置:图片左上角在目标图片的坐标
-	false);
-	CopyToRect(BUF->grayBmp_1d16,//源图片指针
-	pYBits,//目标图片指针
-	1 60,120,//区域图片大小
-	6 40,480,//目标图片大小
-	4 80,1,//区域位置:图片左上角在目标图片的坐标
-	true);}
+		for (i = 0; i < w / 4; i++)
+			pd8[i] = pV[2 * i];
+		pV += 2 * w;
+		pd8 += w / 4;
+	}
+	// 十六分之一采样
+	BYTE *pd16 = BUF->grayBmp_1d16;
+	pY = pYBits;
+	for (j = 0; j < h / 4; j++)
+	{
+		for (i = 0; i < w / 4; i++)
+			pd16[i] = pY[i * 4];
+		pY += 4 * w;
+		pd16 += w / 4;
 	}
 
+	if (bLastPlugin)
+	{
+		// todo blastplugin? copytorect?
+		CopyToRect(BUF->clrBmp_1d8, //源图片指针
+				   pYBits,			//目标图片指针,用displayimage会报错
+				   320, 120,		//区域图片大小
+				   640, 480,		//目标图片大小
+				   1, 1,			//区域位置:图片左上角在目标图片的坐标
+				   false);
+		CopyToRect(BUF->grayBmp_1d16, //源图片指针
+				   pYBits,			  //目标图片指针
+				   160, 120,		  //区域图片大小
+				   640, 480,		  //目标图片大小
+				   480, 1,			  //区域位置:图片左上角在目标图片的坐标
+				   true);
+	}
 }
-
-
+}
 
 DLL_EXP void ON_PLUGINEXIT()
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());//模块状态切换
-	//theApp.dlg.DestroyWindow();
+	AFX_MANAGE_STATE(AfxGetStaticModuleState()); //模块状态切换
+												 //theApp.dlg.DestroyWindow();
 }
