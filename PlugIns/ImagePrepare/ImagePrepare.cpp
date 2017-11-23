@@ -6,7 +6,8 @@
 #include "BufStruct.h"
 #include "ImageProc.h"
 #include "math.h"
-
+#include "VFWCAPTURE.h"
+#include "VFWCAPTUREDlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -93,7 +94,7 @@ DLL_EXP int ON_PLUGINCTRL(int nMode, void *pParameter)
 
 // extern "C" _declspec(ddlimport) void myHeapAllocInit(BUF_STRUCT *pBufStruct);
 DLL_INP void myHeapAllocInit(BUF_STRUCT *pBufStruct);
-DLL_INP DLL_EXP bool ReSample(aBYTE *ThisImage, int Width, int Height, //源图片指针及大小
+DLL_INP bool ReSample(aBYTE *ThisImage, int Width, int Height, //源图片指针及大小
 							  int newWidth, int newHeight,			   //目标图片大小
 							  bool InsMode,							   //true：双线性内插法，false：邻近点采样法
 							  bool bGray,							   //true：灰度图片采样，false：彩色图片采样
@@ -109,20 +110,21 @@ void copy_img(aBYTE *src_img, aBYTE *dst_img, int w, int h)
 
 void InitTraceObject(TRACE_OBJECT *obj, char *mode)
 {
-	obj->rcObject = {0, 0, 0, 0};
+	obj->rcObject.height = obj->rcObject.width=obj->rcObject.top=obj->rcObject.left=0;
 	obj->fvObject->size = sizeof(FeatureVector4P) * 5;
 	// todo
-	for (int i = 0; i < 4; i++)
-		obj->fvObject->Vector[i] = (0, 0);
-	obj->fvObject_org->size = sizeof(FeatureVector4P) * 5;
-	for (int i = 0; i < 4; i++)
-		obj->fvObject_org->Vector[i] = (0, 0);
+	int i; 
+	for ( i = 0; i < 4; i++)
+		obj->fvObject.Vector[i] = (0, 0);
+	obj->fvObject_org.size = sizeof(FeatureVector4P) * 5;
+	for ( i = 0; i < 4; i++)
+		obj->fvObject_org.Vector[i] = (0, 0);
 	obj->spdxObj = obj->spdyObj = 0;
 	obj->nMinDist = 0x7fffffff;
 	obj->bBrokenTrace = false;
 	obj->bSaveit = false;
 	obj->nBrokenTimes = 0;
-	obj->sName = "lz-tr";
+	//obj->sName = "lz-tr12";
 }
 
 DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits, BYTE *pBuffer)
@@ -215,7 +217,7 @@ DLL_EXP void ON_PLUGINRUN(int w, int h, BYTE *pYBits, BYTE *pUBits, BYTE *pVBits
 				   true);
 	}
 }
-}
+
 
 DLL_EXP void ON_PLUGINEXIT()
 {
