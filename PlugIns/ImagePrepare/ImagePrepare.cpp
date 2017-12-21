@@ -119,8 +119,6 @@ DLL_INP bool ReSample(aBYTE *ThisImage, int Width, int Height, int newWidth, int
 void copy_img(aBYTE *src_img, aBYTE *dst_img, int w, int h)
 {
 	int sum = w * h;
-	//for (int i = 0; i < sum; i++)
-	//	dst_img[i] = src_img[i];
 	memcpy(dst_img,src_img,sum);
 }
 DLL_EXP void InitFeatureVector(FeatureVector *pThis)

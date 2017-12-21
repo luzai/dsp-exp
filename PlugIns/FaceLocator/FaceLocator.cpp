@@ -246,15 +246,14 @@ int RegionLabel(aBYTE *tempImg, int width, int height)
 
 aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst)
 {
-	int minx = w, maxx = h, miny = 0, maxy = 0;
+	int minx = w, maxx = 0, miny = h, maxy = 0;
 	for (int j = 0; j < h; j++)
 	{
 		for (int i = 0; i < w; i++)
 		{
 			if (src[j * w + i] == value)
 			{
-				if (!dst)
-					dst[j * w + i] = 255;
+				dst[j * w + i] = 255;
 				if (i < minx)
 					minx = i;
 				if (i > maxx)
@@ -264,7 +263,7 @@ aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst)
 				if (j > maxy)
 					maxy = j;
 			}
-			else if (!dst)
+			else
 				dst[j * w + i] = 0;
 		}
 	}
@@ -334,8 +333,6 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 	for (i = 0; i < w * h / 16; i++)
 		tempImg[i] = 255 * BUF->pOtherVars->byHistMap_U[pU[i]] * BUF->pOtherVars->byHistMap_V[pV[i]];
 	
-	
-	
 	Erosion(tempImg, w / 4, h / 4, 3);
 	Dilation(tempImg, w / 4, h / 4, 3);
 
@@ -348,6 +345,8 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 			   640, 480,
 			   480, 0,
 			   true);
+		//myHeapFree(tempImg);
+		//return;
 	}
 	RegionLabel(tempImg, w / 4, h / 4);
 	//5人脸区域定位及显示
@@ -367,12 +366,12 @@ DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYT
 	BUF->rcnFace.top = res.top;
 	BUF->rcnFace.width = 2 * res.width;
 	BUF->nFacePixelNum = max; 
-
+	
+	//ReSample(tempImg, w/2, h/4, w/4, h/4, true, true, BUF->clrBmp_1d8); 
 	for (i = 0; i < w * h / 8; i++)
 		BUF->clrBmp_1d8[i] = tempImg[i / 2];
 
 	if (bLastPlugin){
-		
 		aRect rcn = {BUF->rcnFace.left * 2,
 					 BUF->rcnFace.top * 4,
 					 BUF->rcnFace.width * 2,
