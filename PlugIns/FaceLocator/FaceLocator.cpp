@@ -177,72 +177,6 @@ void Dilation(aBYTE *tempImg, int width, int height, int N)
 	myHeapFree(tempImg2);
 }
 
-int RegionLabel(aBYTE *tempImg, int width, int height)
-{
-	int i, classnum, L = 0;
-	int Lmax, Lmin;
-	int LK[1024], LK1[1024]; //等价表
-	int Left = 0, Up = 0;
-	for (i = 0; i < 1024; i++)
-		LK[i] = i;
-	WORD *tempLabel = (WORD *)myHeapAlloc(width * height * sizeof(WORD)); //WORD型变量为两个字节
-
-	for (i = 0; i < width * height; i++)
-	{
-		if (tempImg[i] != 0)
-		{
-			if (i < width || tempImg[i - width] == 0)
-			{
-				if (i % width == 0 || tempImg[i - 1] == 0) //左边也是黑点,判定一个新区域
-					tempLabel[i] = ++L;
-				else
-					tempLabel[i] = tempLabel[i - 1];
-			}
-			else
-			{
-				if (i % width == 0 || tempImg[i - 1] == 0)
-					tempLabel[i] = tempLabel[i - width]; //复制上边标号
-				else if (tempLabel[i - width] == tempLabel[i - 1])
-					tempLabel[i] = tempLabel[i - width];
-				else
-				{
-					tempLabel[i] = tempLabel[i - 1];
-					if (Up != tempLabel[i - width] && Left != tempLabel[i - 1])
-					{
-						Lmax = tempLabel[i - 1];
-						Lmin = tempLabel[i - width];
-						while (Lmax != LK[Lmax])
-							Lmax = LK[Lmax];
-						while (Lmin != LK[Lmin])
-							Lmin = LK[Lmin];
-						LK[Lmax] = Lmin;
-						Up = tempLabel[i - width];
-						Left = tempLabel[i - 1];
-					}
-				}
-			}
-		}
-		else
-			tempLabel[i] = 0;
-	}
-	for (i = 1; i < 1024; i++)
-	{
-		Lmax = LK[i];
-		while (Lmax != LK[Lmax])
-			Lmax = LK[Lmax];
-	}
-	//连通区域重新分类
-	for (LK1[0] = 0, i = 1, classnum = 1; i <= L; i++)
-		if (i == LK[i])
-			LK1[i] = classnum++;
-		else
-			LK1[i] = LK1[LK[i]];
-	//图片代换,注意最终连通域标号不能大于255
-	for (i = 0; i < width * height; i++)
-		tempImg[i] = LK1[tempLabel[i]];
-	myHeapFree((aBYTE *)tempLabel);
-	return 0;
-}
 
 aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst)
 {
@@ -270,46 +204,22 @@ aRect get_bbox(aBYTE *src, int w, int h, int value, aBYTE *dst)
 	aRect res = {minx,miny,maxx-minx,maxy-miny}; 
 	return res;
 }
-void CopyToRect(
+
+DLL_IMP int RegionLabel(aBYTE *tempImg, int width, int height);
+
+DLL_INP void CopyRectTo(aBYTE* ThisImage,  //src img 
+				aBYTE* anImage, // dest img 
+				int Width, int Height,  //src img size 
+				aRect rcvRect, // src img bbox 
+				bool bGray);
+DLL_INP void CopyToRect(
 	         aBYTE* ThisImage,//区域图片指针
 			 aBYTE* anImage,//目标图片指针
 			 int W,int H,//区域图片大小
 		     int DestW,int DestH,//目标图片大小
 			 int nvLeft,int nvTop,//区域位置：图片左上角在目标图片的坐标
 			 bool bGray//灰度图片标记，true：灰度；false：彩色。
-					  )
-{
-    aBYTE  * lpSrc = ThisImage;
-    aBYTE  * lpDes = anImage;
-    aBYTE  * lps, * lpd;
-    int h;
-	ASSERT(ThisImage && anImage);
-    ASSERT( nvLeft+W<=DestW && nvTop+H<=DestH && nvLeft>=0 && nvTop>=0 );
-	//Y
-    for(h=0;h<H;h++){
-        lpd = lpDes+(nvTop+h)*DestW+nvLeft;
-        lps = lpSrc+(DWORD)h*W;
-		memcpy(lpd,lps,W);
-    }
-	if( bGray )	return;
-	//U
-	lpSrc += W*H;
-	lpDes += DestW*DestH;
-    for(h=0;h<H;h++){
-        lpd = lpDes+(nvTop+h)*(DestW/2)+nvLeft/2;
-        lps = lpSrc+(DWORD)h*W/2;
-		memcpy(lpd,lps,W/2);
-    }
-	//V
-	lpSrc += W*H/2;
-	lpDes += DestW*DestH/2;
-    for(h=0;h<H;h++){
-        lpd = lpDes+(nvTop+h)*(DestW/2)+nvLeft/2;
-        lps = lpSrc+(DWORD)h*W/2;
-		memcpy(lpd,lps,W/2);
-    }
-}
-
+					  );
 DLL_EXP void ON_PLUGINRUN(int w,int h,BYTE* pYBits,BYTE* pUBits,BYTE* pVBits,BYTE* pBuffer)
 {
 //pYBits 大小为w*h
